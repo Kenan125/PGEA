@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "typescript-config/strict": "off"
+  },
+  "browserslist": [
+    "defaults",
+    "not ie 11",
+    "not ie <= 11"
+  ]
+}

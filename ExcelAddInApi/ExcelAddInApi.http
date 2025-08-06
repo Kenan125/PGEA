@@ -1,0 +1,6 @@
+@ExcelAddInApi_HostAddress = http://localhost:5063
+
+GET {{ExcelAddInApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
