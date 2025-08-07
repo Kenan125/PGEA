@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { readSelectedArea } from "../readselectedarea";
 import { send } from "../send";
 
-import { listUsedcolumns } from "../listusedcolumns";
 import { format } from "date-fns";
+import { listUsedcolumns } from "../listusedcolumns";
+import { readColumn } from "../ReadColumn";
 
-interface GetProps {
-  listUsedColumn: () => Promise<string[]>;
-}
 
-const Send = (props: GetProps) => {
+
+const Send = () => {
+  
   const today:string = format((new Date()), "yyyy-MM-dd'T'HH:mm:ss'Z'");
   const [recipients, setRecipients] = useState<Array<{ phoneNumber: string; sendDate: string }>>(
     []
@@ -24,24 +24,26 @@ const Send = (props: GetProps) => {
   const [timeWindowStart, setTimeWindowStart] = useState<string>("");
   const [timeWindowEnd, setTimeWindowEnd] = useState<string>("");
   const [usedColumns, setUsedColumns] = useState<string[]>([]);
-  const [selectedColumn, setSelectedColumn] = useState<string | undefined>();
+  const [usedNumColumns, setUsedNumColumns] = useState<number | undefined>();
+  const [colNum,setColNum]=useState<number[]>([]);
+  const [selectedColumn, setSelectedColumn] = useState<string>("");
+  const[text,setText] =useState<string>("")
   useEffect(() => {
     handleListUsedColumns();
+    
+    
   }, []);
   const handleListUsedColumns = async () => {
-    const list = await props.listUsedColumn();
-    setUsedColumns(list);
+    const list = await listUsedcolumns();
+    setUsedColumns(list.columnLetters);
+    setColNum(list.columnInfo);
   };
-  const handleGetNumber = async () => {
-    try {
-      const result = await readSelectedArea();
+  const handleReadColumn = async () => {
+      const result = await readColumn(usedNumColumns,text);
       const parsed = JSON.parse(result);
       setRecipients(parsed);
-      await handleListUsedColumns();
-    } catch (error) {
-      console.error("Error reading Excel data:", error);
     }
-  };
+  
   const handleChecked = (e) => {
     const newValue = e.target.checked;
     setIsLastSendDate(newValue);
@@ -215,15 +217,25 @@ const Send = (props: GetProps) => {
     <form onSubmit={handleSubmit}>
       {usedColumns.length > 0 && (
         <>
-          <label htmlFor="columnSelect">Select a column</label>
+          <label htmlFor="columnSelect">Select Phone Number Column</label>
           <select
+          
             id="columnSelect"
             value={selectedColumn}
-            onChange={(e) => setSelectedColumn(e.target.value)}
+            onChange={(e) => {
+              const selectedValue = e.target.value;
+              console.log("Selected column:", selectedValue);
+              setSelectedColumn(selectedValue);
+              const index = usedColumns.findIndex((col) => col === selectedValue);
+              setUsedNumColumns(colNum[index]);
+              setText("phoneNumber");
+              
+        
+            }}
+            onClick={handleReadColumn}
+            required
           >
-            <option value="" disabled>
-              Select a column
-            </option>
+            <option label="Select a column" value="" disabled/>                      
             {usedColumns.map((col, index) => (
               <option key={index} value={col}>
                 {col}
@@ -238,13 +250,17 @@ const Send = (props: GetProps) => {
           id="sendMethod"
           className="form-control"
           value={sendMethod}
-          onChange={handleSendMethod /*(e)=> setSendMethod(Number(e.target.value)) */}
+          onChange={handleSendMethod}
+          required
         >
+          <option label="Select"  disabled/> 
           <option value={0}>Send Now</option>
           <option value={1}>Send Scheduled</option>
           <option value={2}>Send Batches</option>
           <option value={3}> Send Column Date</option>
+          
         </select>
+        
       </label>
       <div>
         <label htmlFor="MessageInput" className="form-label">
@@ -261,20 +277,7 @@ const Send = (props: GetProps) => {
       </div>
       <div>{displaySendmethod(sendMethod)}</div>
 
-      <div>
-        <button type="button" onClick={handleGetNumber}>
-          Load Phone Numbers from Excel
-        </button>
-      </div>
-
-      <div>
-        <strong>Loaded numbers:</strong>
-        <ul>
-          {recipients.map((p, i) => (
-            <li key={i}>{p.phoneNumber}</li>
-          ))}
-        </ul>
-      </div>
+        
       <div>
         <button type="submit">Send Message</button>
       </div>

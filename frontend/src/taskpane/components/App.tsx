@@ -20,6 +20,8 @@ import { getDate } from "../getdate";
 import GetDate from "./GetDate";
 import { listUsedcolumns } from "../listusedcolumns";
 import Send from "./Send";
+import ReadColumn from "./ReadColumn";
+import { readColumn } from "../ReadColumn";
 
 interface AppProps {
   title: string;
@@ -43,7 +45,7 @@ const App: React.FC<AppProps> = () => {
           <Link to="/send-now">Send Now</Link> |<Link to="/batch-send">Batch Send</Link> |
           <Link to="/Test">Test</Link> |<Link to="/send-scheduled">Send Scheduled</Link> |
           <Link to="/set-date">Set Date</Link> |<Link to="/get-date">Get Date</Link> |
-          <Link to="/send">Send</Link> 
+          <Link to="/send">Send</Link>  | <Link to="/read-column">Read Column</Link>
 
         </nav>
         <Routes>
@@ -61,11 +63,9 @@ const App: React.FC<AppProps> = () => {
           <Route path="/batch-send" element={<BatchSend />} />
           <Route path="/send-scheduled" element={<SendScheduled />} />
           <Route path="/set-date" element={<SetDate setDate={setDate} />} />
-          <Route
-            path="/get-date"
-            element={<GetDate getDate={getDate} listUsedColumns={listUsedcolumns} />}
-          />
-          <Route path="/send"  element={<Send listUsedColumn={listUsedcolumns}  /> } />
+          <Route          path="/get-date"  element={<GetDate getDate={getDate}  />} />
+          <Route path="/send"  element={<Send  /> } />
+          <Route path ="/read-column" element={<ReadColumn />} />
         </Routes>
       </div>
     </MemoryRouter>

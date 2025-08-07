@@ -6,14 +6,14 @@ import {
   Textarea,
   tokens,
   makeStyles,
-  List,
   Dropdown,
   Option,
 } from "@fluentui/react-components";
+import { listUsedcolumns } from "../listusedcolumns";
 
 interface GetDateProps {
   getDate: (range: number, time: string) => Promise<boolean>;
-  listUsedColumns: () => Promise<string[]>;
+  
 }
 
 const useStyles = makeStyles({
@@ -43,8 +43,8 @@ const GetDate: React.FC<GetDateProps> = (props: GetDateProps) => {
   const [usedColumns, setUsedColumns] = useState<string[]>([]);
 
   const handleListUsedColumns = async () => {
-    const list = await props.listUsedColumns();
-    setUsedColumns(list);
+    const list = await listUsedcolumns();
+    setUsedColumns(list.columnLetters);
   };
 
   const handleReadSelectedText = async () => {   
