@@ -65,7 +65,7 @@ const App: React.FC<AppProps> = () => {
             path="/get-date"
             element={<GetDate getDate={getDate} listUsedColumns={listUsedcolumns} />}
           />
-          <Route path="/send" element={<Send /> } />
+          <Route path="/send"  element={<Send listUsedColumn={listUsedcolumns}  /> } />
         </Routes>
       </div>
     </MemoryRouter>

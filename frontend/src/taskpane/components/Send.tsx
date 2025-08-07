@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { readSelectedArea } from "../readselectedarea";
 import { send } from "../send";
 
-const Send = () => {
+import { listUsedcolumns } from "../listusedcolumns";
+import { format } from "date-fns";
+
+interface GetProps {
+  listUsedColumn: () => Promise<string[]>;
+}
+
+const Send = (props: GetProps) => {
+  const today:string = format((new Date()), "yyyy-MM-dd'T'HH:mm:ss'Z'");
   const [recipients, setRecipients] = useState<Array<{ phoneNumber: string; sendDate: string }>>(
     []
   );
@@ -10,17 +18,26 @@ const Send = () => {
   const [isLastSendDate, setIsLastSendDate] = useState<boolean>(false);
   const [lastSendDate, setLastSendDate] = useState<string>();
   const [messageInput, setMessageInput] = useState<string>("");
-  const [sendDate, setSendDate] = useState<string>("");
+  const [sendDate, setSendDate] = useState<string>(today);
   const [batchSize, setBatchSize] = useState<number>(0);
   const [intervalMinutes, setIntervalMinutes] = useState<number>(0);
   const [timeWindowStart, setTimeWindowStart] = useState<string>("");
   const [timeWindowEnd, setTimeWindowEnd] = useState<string>("");
-
+  const [usedColumns, setUsedColumns] = useState<string[]>([]);
+  const [selectedColumn, setSelectedColumn] = useState<string | undefined>();
+  useEffect(() => {
+    handleListUsedColumns();
+  }, []);
+  const handleListUsedColumns = async () => {
+    const list = await props.listUsedColumn();
+    setUsedColumns(list);
+  };
   const handleGetNumber = async () => {
     try {
       const result = await readSelectedArea();
       const parsed = JSON.parse(result);
       setRecipients(parsed);
+      await handleListUsedColumns();
     } catch (error) {
       console.error("Error reading Excel data:", error);
     }
@@ -43,19 +60,19 @@ const Send = () => {
     if (newValue == 2) {
       return (
         <>
-        <div>
-        <label htmlFor="sendDate" className="form-label">
-          Start Time
-        </label>
-        <input
-          id="sendDate"
-          className="form-control"
-          type="datetime-local"
-          value={sendDate}
-          onChange={(e) => setSendDate(e.target.value)}
-          required
-        />
-      </div>
+          <div>
+            <label htmlFor="sendDate" className="form-label">
+              Start Time
+            </label>
+            <input
+              id="sendDate"
+              className="form-control"
+              type="datetime-local"
+              value={sendDate}
+              onChange={(e) => setSendDate(e.target.value)}
+              required
+            />
+          </div>
           <div>
             <label htmlFor="BatchSize" className="form-label">
               Batch Size
@@ -123,23 +140,22 @@ const Send = () => {
           <div>{displayLastSendDate(isLastSendDate)}</div>
         </>
       );
-    }else if(newValue ==1){
-        return(
-            <div>
-        <label htmlFor="sendDate" className="form-label">
-          Start Time
-        </label>
-        <input
-          id="sendDate"
-          className="form-control"
-          type="datetime-local"
-          value={sendDate}
-          onChange={(e) => setSendDate(e.target.value)}
-          required
-        />
-      </div>
-
-        )
+    } else if (newValue == 1) {
+      return (
+        <div>
+          <label htmlFor="sendDate" className="form-label">
+            Start Time
+          </label>
+          <input
+            id="sendDate"
+            className="form-control"
+            type="datetime-local"
+            value={sendDate}
+            onChange={(e) => setSendDate(e.target.value)}
+            required
+          />
+        </div>
+      );
     }
     return <></>;
   }
@@ -166,6 +182,7 @@ const Send = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const payload = {
       sendMethod,
       isLastSendDate,
@@ -193,8 +210,28 @@ const Send = () => {
       console.error("Error sending data:", error);
     }
   };
+
   return (
     <form onSubmit={handleSubmit}>
+      {usedColumns.length > 0 && (
+        <>
+          <label htmlFor="columnSelect">Select a column</label>
+          <select
+            id="columnSelect"
+            value={selectedColumn}
+            onChange={(e) => setSelectedColumn(e.target.value)}
+          >
+            <option value="" disabled>
+              Select a column
+            </option>
+            {usedColumns.map((col, index) => (
+              <option key={index} value={col}>
+                {col}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
       <label htmlFor="sendMethod" className="form-label">
         Select send Method
         <select
@@ -223,8 +260,6 @@ const Send = () => {
         />
       </div>
       <div>{displaySendmethod(sendMethod)}</div>
-
-      
 
       <div>
         <button type="button" onClick={handleGetNumber}>
