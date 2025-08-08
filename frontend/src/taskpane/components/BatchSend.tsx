@@ -77,7 +77,7 @@ const BatchSend = () => {
     };
     try {
       console.log(JSON.stringify(payload, null, 1));
-      await send(payload);
+      //await send(payload);
 
       console.log("Data sent successfully.");
     } catch (error) {

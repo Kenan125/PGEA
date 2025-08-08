@@ -18,6 +18,7 @@ namespace Services.Services
         public async Task<bool> SendMessageNowAsync(MessageRequest message)
         {
             message.BatchSetting = null;
+            
             var model = mapper.Map<BulkSmsRequest>(message);
             model.Recipients.FirstOrDefault().SendDate = DateTime.Now;
             

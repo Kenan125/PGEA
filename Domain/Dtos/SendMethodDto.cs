@@ -1,10 +1,13 @@
-﻿namespace Domain.Dtos
+﻿using System.Text.Json.Serialization;
+
+namespace Domain.Dtos
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SendMethodDto
     {
-        Now,
-        Scheduled,
-        Batch,
-        PerRecipientSchedule
+        Now = 0,
+        Scheduled = 1,
+        Batch = 2,
+        PerRecipientSchedule = 3
     }
 }

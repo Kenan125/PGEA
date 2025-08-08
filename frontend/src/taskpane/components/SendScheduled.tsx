@@ -36,7 +36,7 @@ const SendScheduled = () => {
     };
     try {
       
-      await send(payload);
+      //await send(payload);
       console.log("Data sent successfully.");
     } catch (error) {
       console.error("Error sending data:", error);

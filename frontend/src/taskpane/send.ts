@@ -1,6 +1,6 @@
 import axios from "axios";
 type payloadProps = {
-  sendMethod: number;
+  sendMethod: string;
   isLastSendDate?: boolean;
   lastSendDate?: string;
   messageContent: {
@@ -11,10 +11,10 @@ type payloadProps = {
     }>;
   };
   batchSetting?: {
-    batchSize: number;
-    intervalMinutes: number;
-    timeWindowStart: string;
-    timeWindowEnd: string;
+    batchSize?: number;
+    intervalMinutes?: number;
+    timeWindowStart?: string ;
+    timeWindowEnd?: string ;
   };
 };
 
@@ -25,7 +25,7 @@ export async function send(payload: payloadProps): Promise<void> {
         "Content-Type": "application/json",
       },
     });
-    console.log("Batch send created successfully!", response.data);
+    console.log("Message send created successfully!", response.data);
   } catch (error) {
     console.error("Error creating post:", error);
     if (error.response?.data?.errors) {

@@ -5,34 +5,50 @@ import { send } from "../send";
 import { format } from "date-fns";
 import { listUsedcolumns } from "../listusedcolumns";
 import { readColumn } from "../ReadColumn";
+import { Dropdown, DropdownProps, Field, Option, useId } from "@fluentui/react-components";
+import { ErrorCircle12Filled, ErrorCircle12Regular } from "@fluentui/react-icons";
 
 
 
-const Send = () => {
-  
+const Send = (props: Partial<DropdownProps>) => {
+  const dropdownId = useId("dropdown-default");
+  const options = [
+    "Now",
+    "Scheduled",
+    "Batch",
+    "ColumnDate",    
+  ];
   const today:string = format((new Date()), "yyyy-MM-dd'T'HH:mm:ss'Z'");
   const [recipients, setRecipients] = useState<Array<{ phoneNumber: string; sendDate: string }>>(
     []
   );
-  const [sendMethod, setSendMethod] = useState<number>();
+  const [sendMethod, setSendMethod] = useState<string>("");
   const [isLastSendDate, setIsLastSendDate] = useState<boolean>(false);
   const [lastSendDate, setLastSendDate] = useState<string>();
   const [messageInput, setMessageInput] = useState<string>("");
   const [sendDate, setSendDate] = useState<string>(today);
   const [batchSize, setBatchSize] = useState<number>(0);
   const [intervalMinutes, setIntervalMinutes] = useState<number>(0);
-  const [timeWindowStart, setTimeWindowStart] = useState<string>("");
-  const [timeWindowEnd, setTimeWindowEnd] = useState<string>("");
+  const [timeWindowStart, setTimeWindowStart] = useState<string>();
+  const [timeWindowEnd, setTimeWindowEnd] = useState<string>();
   const [usedColumns, setUsedColumns] = useState<string[]>([]);
   const [usedNumColumns, setUsedNumColumns] = useState<number | undefined>();
   const [colNum,setColNum]=useState<number[]>([]);
   const [selectedColumn, setSelectedColumn] = useState<string>("");
-  const[text,setText] =useState<string>("")
+  const[text,setText] =useState<string>("");
+  const [sendMethodError, setSendMethodError] = useState<string | undefined>();
   useEffect(() => {
     handleListUsedColumns();
     
     
   }, []);
+  const handleSendMethodSelect = (data) => {
+    // When the user selects an option, clear any existing error.
+    setSendMethod(data.optionValue);
+    if(data.optionValue){
+      setSendMethodError(undefined);
+    }
+  };
   const handleListUsedColumns = async () => {
     const list = await listUsedcolumns();
     setUsedColumns(list.columnLetters);
@@ -58,8 +74,8 @@ const Send = () => {
     console.log(newValue);
     setSendMethod(newValue);
   };
-  function displaySendmethod(newValue: number) {
-    if (newValue == 2) {
+  function displaySendmethod(newValue: string) {
+    if (newValue == "Batch") {
       return (
         <>
           <div>
@@ -142,7 +158,7 @@ const Send = () => {
           <div>{displayLastSendDate(isLastSendDate)}</div>
         </>
       );
-    } else if (newValue == 1) {
+    } else if (newValue == "Scheduled") {
       return (
         <div>
           <label htmlFor="sendDate" className="form-label">
@@ -184,7 +200,11 @@ const Send = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    if (!sendMethod) {
+      
+      setSendMethodError("Please select a send method.");
+      return; 
+    }
     const payload = {
       sendMethod,
       isLastSendDate,
@@ -205,7 +225,7 @@ const Send = () => {
     };
     try {
       console.log(JSON.stringify(payload, null, 1));
-      //await send(payload);
+      await send(payload);
       console.log("Data sent successfully.");
     } catch (error) {
       console.log(payload);
@@ -244,7 +264,7 @@ const Send = () => {
           </select>
         </>
       )}
-      <label htmlFor="sendMethod" className="form-label">
+      {/* <label htmlFor="sendMethod" className="form-label">
         Select send Method
         <select
           id="sendMethod"
@@ -252,8 +272,7 @@ const Send = () => {
           value={sendMethod}
           onChange={handleSendMethod}
           required
-        >
-          <option label="Select"  disabled/> 
+        >          
           <option value={0}>Send Now</option>
           <option value={1}>Send Scheduled</option>
           <option value={2}>Send Batches</option>
@@ -261,7 +280,18 @@ const Send = () => {
           
         </select>
         
-      </label>
+      </label> */}
+      <Field validationMessage={sendMethodError}  validationState="warning" label="Send Method" required={true} aria-required="true" >
+      
+      <Dropdown  aria-required="true" id={dropdownId} placeholder="Select Method" {...props} value={sendMethod} onOptionSelect={(_,data)=> setSendMethod(data.optionValue)}   >
+        {options.map((option) => (
+          <Option key={option} aria-required="true">
+            {option}
+          </Option>
+        ))}
+        
+      </Dropdown>
+    </Field>
       <div>
         <label htmlFor="MessageInput" className="form-label">
           Message Input

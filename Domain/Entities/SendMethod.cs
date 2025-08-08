@@ -2,9 +2,9 @@
 {
     public enum SendMethod
     {
-        Now,
-        Scheduled,
-        Batch,
-        PerRecipientSchedule
+        Now = 0,
+        Scheduled = 1,
+        Batch = 2,
+        PerRecipientSchedule = 3
     }
 }
