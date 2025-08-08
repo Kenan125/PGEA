@@ -1,8 +1,9 @@
 export async function listNumUsedColumns(): Promise<number[]> {
   try {
     return await Excel.run(async (context) => {
-      const sheet = context.workbook.worksheets.getActiveWorksheet();
-      const usedRange = sheet.getUsedRange();
+      const sheet = context.workbook.worksheets.getActiveWorksheet();   
+      const usedRange = sheet.getUsedRange();    
+      await context.sync();
       usedRange.load("columnCount, columnIndex,values");
       await context.sync();
       const startCol = usedRange.columnIndex;
