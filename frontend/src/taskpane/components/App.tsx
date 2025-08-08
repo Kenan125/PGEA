@@ -18,10 +18,11 @@ import { setDate } from "../setdate";
 import SetDate from "./SetDate";
 import { getDate } from "../getdate";
 import GetDate from "./GetDate";
-import { listUsedcolumns } from "../listusedcolumns";
+
 import Send from "./Send";
 import ReadColumn from "./ReadColumn";
 import { readColumn } from "../ReadColumn";
+import Header from "./Header";
 
 interface AppProps {
   title: string;
@@ -37,7 +38,10 @@ const App: React.FC<AppProps> = () => {
   const styles = useStyles();
 
   return (
+    <>
+    
     <MemoryRouter>
+      <Header logo="./assets/postaguvercinilogodaire.png" message="Posta Güvercini" />
       <div className={styles.root}>
         <nav>
           <Link to="/">Home</Link> |<Link to="/insert-text">Insert Text To Area</Link> |
@@ -69,6 +73,8 @@ const App: React.FC<AppProps> = () => {
         </Routes>
       </div>
     </MemoryRouter>
+    </>
+    
   );
 };
 
