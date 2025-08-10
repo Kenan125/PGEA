@@ -6,9 +6,13 @@ export async function readColumn(chsRow:number, chs:string): Promise<string> {
             selectedRange.load(["text"]);
             await context.sync();
             const values = selectedRange.text;
-            const text = JSON.stringify(values.map(row => ({[chs]:String(row[chsRow])}) ),null,1);
+            let text = "";
+            if(values !== null){
+                 text = JSON.stringify(values.map(row => ({[chs]:String(row[chsRow])}) ),null,1);
             console.log(text);
 
+            }
+            
 
             return text;
         });

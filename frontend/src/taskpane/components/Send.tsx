@@ -52,10 +52,11 @@ const Send = (props: Partial<DropdownProps>) => {
   const handleListUsedColumns = async () => {
     const list = await listUsedcolumns();
     setUsedColumns(list.columnLetters);
-    setColNum(list.columnInfo);
+    setColNum(list.columnNum);
   };
   const handleReadColumn = async () => {
-      const result = await readColumn(usedNumColumns,text);
+    const list = await listUsedcolumns();
+      const result = await readColumn(usedNumColumns-list.startCol,text);
       const parsed = JSON.parse(result);
       setRecipients(parsed);
     }

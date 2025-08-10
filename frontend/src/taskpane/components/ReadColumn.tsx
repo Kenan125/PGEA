@@ -22,7 +22,7 @@ const ReadColumn = () => {
   const handleListUsedColumns = async () => {
     const list = await listUsedcolumns();   
     setUsedColumns(list.columnLetters);
-    setColNum(list.columnInfo);
+    setColNum(list.columnNum);
   };
 
   const handleReadColumn = async () => {
