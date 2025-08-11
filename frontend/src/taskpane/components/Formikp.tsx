@@ -1,295 +1,210 @@
+import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik } from "formik";
 import React, { useEffect, useState } from "react";
+import * as yup from "yup";
+import { sendSchema } from "../schemas/sendSchema";
+import CustomInput from "../customFields/customInput";
 import { send } from "../send";
-import { format } from "date-fns";
+import { Dropdown, DropdownProps, Option, useId } from "@fluentui/react-components";
 import { listUsedcolumns } from "../listusedcolumns";
 import { readColumn } from "../ReadColumn";
-import { Formik, Form, Field as FormikField, ErrorMessage } from "formik";
+import { format } from "date-fns";
+import Batch from "./Batch";
+import Scheduled from "./Scheduled";
 
-import * as Yup from "yup";
-
-import {
-  Button,
-  Dropdown,
-  DropdownProps,
-  Field,
-  Label,
-  makeStyles,
-  Option,
-  useId,
-} from "@fluentui/react-components";
-const useStyles = makeStyles({
-  root: {
-    minHeight: "100vh",
-  },
-});
-// ✅ Yup validation schema
-const validationSchema = Yup.object({
-  selectedColumn: Yup.string().required("Please select a phone number column."),
-  sendMethod: Yup.string().required("Please select a send method."),
-  messageInput: Yup.string().required("Message is required."),
-  // Conditional validations for Batch
-  batchSize: Yup.number().when("sendMethod", {
-    is: "Batch",
-    then: (schema) => schema.required("Batch size required").min(1),
-  }),
-  intervalMinutes: Yup.number().when("sendMethod", {
-    is: "Batch",
-    then: (schema) => schema.required("Interval required").min(1),
-  }),
-  timeWindowStart: Yup.string().when("sendMethod", {
-    is: "Batch",
-    then: (schema) => schema.required("Start time required"),
-  }),
-  timeWindowEnd: Yup.string().when("sendMethod", {
-    is: "Batch",
-    then: (schema) => schema.required("End time required"),
-  }),
-  sendDate: Yup.string().when("sendMethod", {
-    is: (val) => val === "Scheduled" || val === "Batch",
-    then: (schema) => schema.required("Send date required"),
-  }),
-});
-
+interface Recipient {
+  phoneNumber: string;
+  sendDate?: string
+}
+interface initialValues {
+   selectedColumn: "",
+        sendMethod: "" | "Now" | "Scheduled" | "Batch" | "ColumnDate",
+        isLastSendDate: boolean,
+        lastSendDate: string
+        messageInput: string
+        recipients: Recipient[],
+        sendDate: string,
+        batchSize?: number,
+        intervalMinutes?: number,
+        timeWindowStart?: string
+        timeWindowEnd?: string
+}
 const Formikp = () => {
-    
-  const dropdownId = useId("dropdown-default");
   const options = ["Now", "Scheduled", "Batch", "ColumnDate"];
-  const today = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss'Z'");
-
   const [usedColumns, setUsedColumns] = useState<string[]>([]);
   const [colNum, setColNum] = useState<number[]>([]);
-  const [recipients, setRecipients] = useState([]);
+  const today:string = format((new Date()), "yyyy-MM-dd'T'HH:mm'Z'");
 
-  // Fetch columns once
-  // useEffect(() => {
-  //   (async () => {
-  //     const list = await listUsedcolumns();
-  //     setUsedColumns(list.columnLetters);
-  //     setColNum(list.columnInfo);
-  //   })();
-  // }, []);
+  useEffect(() => {
+    handleListUsedColumns();
+    
+  }, []);
 
-  const handleReadColumn = async (colNum: number) => {
-    const result = await readColumn(colNum, "phoneNumber");
-    const parsed = JSON.parse(result);
-    setRecipients(parsed);
+  const handleListUsedColumns = async () => {
+     try {
+        const l = await listUsedcolumns();
+        setUsedColumns(l.columnLetters || []);
+        setColNum(l.columnNum || []);
+      } catch (err) {
+        console.error("Could not load used columns", err);
+      }
   };
+  
+  const handleColumnSelect = async (columnLetter: string)=>{
+    formik.setFieldValue("selectedColumn", columnLetter);
+    const index = usedColumns.findIndex((col) => col === columnLetter);
+    const absoluteColNum = colNum[index]
+    try{
+      const list = await listUsedcolumns();
+      const result = await readColumn(absoluteColNum-list.startCol, "phoneNumber");
+    const parsed: Recipient[] = JSON.parse(result || "[]");
+    const recipients = parsed.map((r) => ({ phoneNumber: r.phoneNumber, sendDate: formik.values.sendDate }));
+      formik.setFieldValue("recipients", recipients);
+      
 
+    }catch(err){
+      console.error("Failed to read column:", err);
+      formik.setFieldError("recipients", "Failed to read selected column");
+    }
+  }
+  const handleSubmit = async (values,{setSubmitting}) =>{
+    
+    if (values.sendMethod === "Now") {
+    values.sendDate = format(new Date(), "yyyy-MM-dd'T'HH:mm'Z'");
+  }
+
+    const payload = {
+      sendMethod: values.sendMethod,
+      isLastSendDate: values.isLastSendDate,
+      lastSendDate: values.lastSendDate,
+      messageContent: {
+          messageInput: values.messageInput,
+          recipients: values.recipients.map((r) => ({ phoneNumber: r.phoneNumber, sendDate: values.sendDate })),
+        },
+      batchSetting: {
+          batchSize: values.batchSize,
+          intervalMinutes: values.intervalMinutes,
+          timeWindowStart: values.timeWindowStart,
+          timeWindowEnd: values.timeWindowEnd,
+        },
+      };
+      try {
+        console.log("payload:", JSON.stringify(payload, null, 2));
+        await send(payload);
+        // you could show a toast here instead of alert
+        alert("Data sent successfully");
+      } catch (error) {
+        console.error("Error sending data:", error);
+        alert("Error sending data. Check console.");
+      } finally {
+        setSubmitting(false);
+      }
+      
+
+    };
+    
+
+  
+  const formik = useFormik<initialValues>({
+    initialValues: {
+      selectedColumn: "",
+      sendMethod: "",
+      isLastSendDate: false,
+      lastSendDate: "",
+      messageInput: "",
+      recipients: [],
+      sendDate: "",
+      batchSize: 0,
+      intervalMinutes: 0,
+      timeWindowStart: "",
+      timeWindowEnd: "",
+    },
+    validationSchema:sendSchema,
+    onSubmit:handleSubmit,
+    
+
+  })
+  
   return (
-    <Formik
-      initialValues={{
-        selectedColumn: "",
-        sendMethod: "",
-        messageInput: "",
-        isLastSendDate: false,
-        lastSendDate: "",
-        sendDate: today,
-        batchSize: 0,
-        intervalMinutes: 0,
-        timeWindowStart: "",
-        timeWindowEnd: "",
-      }}
-      validationSchema={validationSchema}
-      onSubmit={async (values, { setSubmitting }) => {
-        const payload = {
-          sendMethod: values.sendMethod,
-          isLastSendDate: values.isLastSendDate,
-          lastSendDate: values.lastSendDate || undefined,
-          messageContent: {
-            messageInput: values.messageInput,
-            recipients: recipients.map((r) => ({
-              phoneNumber: r.phoneNumber,
-              sendDate: values.sendDate,
-            })),
-          },
-          batchSetting: {
-            batchSize: values.batchSize,
-            intervalMinutes: values.intervalMinutes,
-            timeWindowStart: values.timeWindowStart,
-            timeWindowEnd: values.timeWindowEnd,
-          },
-        };
-
-        try {
-          console.log("Payload:", payload);
-          await send(payload);
-          alert("Message sent successfully");
-        } catch (error) {
-          console.error("Error sending data:", error);
-        } finally {
-          setSubmitting(false);
-        }
-      }}
-    >
-      {({ values, setFieldValue, isSubmitting }) => (
-        <Form>
-          {usedColumns.length > 0 && (
-            <Field
-              label="Select Phone Number Column"
-              required
-              validationMessage={<ErrorMessage name="selectedColumn" />}
-            >
-              <Dropdown
-                id="columnSelect"
-                placeholder="Select Column"
-                value={values.selectedColumn}
-                onOptionSelect={(_event, data) => {
-                  setFieldValue("selectedColumn", data.optionValue);
-                  const index = usedColumns.findIndex(
-                    (col) => col === data.optionValue
-                  );
-                  handleReadColumn(colNum[index]);
-                }}
-              >
-                {usedColumns.map((col, index) => (
-                  <Option key={index} value={col}>
-                    {col}
-                  </Option>
-                ))}
-              </Dropdown>
-            </Field>
+    <form onSubmit={formik.handleSubmit} autoComplete="off">    
+      <>
+      {usedColumns.length>0 &&(
+        <div>
+          <label htmlFor="columnSelect">Select Phone Number Column</label>
+        <select
+          id="columnSelect"
+          name="selectedColumn"
+          value={formik.values.selectedColumn}          
+          onChange={(e)=>handleColumnSelect(e.target.value)}
+          onBlur={formik.handleBlur}          
+          
+        >
+          <option label="Select a column" value="" disabled />
+          {usedColumns.map((col, index) => (
+            <option key={index} value={col}>
+              {col}
+            </option>
+          ))}
+          
+        </select>
+        {formik.errors.recipients && typeof formik.errors.recipients === "string" && (
+            <div style={{ color: "red" }}>{formik.errors.recipients}</div>
           )}
+        </div>
 
-          <Field
-            label="Send Method"
-            required
-            validationMessage={<ErrorMessage name="sendMethod" />}
-          >
-            <Dropdown
-              id={dropdownId}
-              placeholder="Select Method"
-              value={values.sendMethod}
-              onOptionSelect={(_, data) =>
-                setFieldValue("sendMethod", data.optionValue)
-              }
-            >
-              {options.map((option) => (
-                <Option key={option} value={option}>
-                  {option}
-                </Option>
-              ))}
-            </Dropdown>
-          </Field>
+      )}              
+      </>
+      <label htmlFor="sendMethod"> Select Method</label>
+      <select
+        aria-required="true"
+        id="sendMethod"
+        value={formik.values.sendMethod}
+        onChange={(e)=>formik.handleChange(e)}
+        onBlur={formik.handleBlur}
+      >
+        <option value="" disabled>
+          Select Method
+        </option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      {formik.touched.sendMethod && formik.errors.sendMethod && (
+          <div style={{ color: "red" }}>{formik.errors.sendMethod}</div>
+        )}
 
-          <div>
-            <label>Message Input</label>
-            <FormikField name="messageInput" className="form-control" />
-            <ErrorMessage
-              name="messageInput"
-              component="div"
-              
-            />
-          </div>
-
-          {/* Conditional Fields */}
-          {values.sendMethod === "Scheduled" || values.sendMethod === "Batch" ? (
-            <div>
-              <label>Start Time</label>
-              <FormikField
-                name="sendDate"
-                type="datetime-local"
-                className="form-control"
-              />
-              <ErrorMessage
-                name="sendDate"
-                component="div"
-                
-              />
-            </div>
-          ) : null}
-
-          {values.sendMethod === "Batch" && (
-            <>
-              <div>
-                <label>Batch Size</label>
-                <FormikField
-                  name="batchSize"
-                  type="number"
-                  className="form-control"
-                />
-                <ErrorMessage
-                  name="batchSize"
-                  component="div"
-                  
-                />
-              </div>
-
-              <div>
-                <label>Interval Minutes</label>
-                <FormikField
-                  name="intervalMinutes"
-                  type="number"
-                  className="form-control"
-                />
-                <ErrorMessage
-                  name="intervalMinutes"
-                  component="div"
-                  
-                />
-              </div>
-
-              <div>
-                <label>Time Window Start</label>
-                <FormikField
-                  name="timeWindowStart"
-                  type="time"
-                  className="form-control"
-                />
-                <ErrorMessage
-                  name="timeWindowStart"
-                  component="div"
-                  
-                />
-              </div>
-
-              <>
-                <label>Time Window End</label>
-                <FormikField
-                  name="timeWindowEnd"
-                  type="time"
-                  className="form-control"
-                />
-                <ErrorMessage
-                  name="timeWindowEnd"
-                  component="div"
-                  
-                />
-              </>
-
-              <div>
-                <label htmlFor="checkbox">Is Last Send Date</label>
-                <input
-                id="checkbox"
-                  type="checkbox"
-                  checked={values.isLastSendDate}
-                  onChange={(e) =>
-                    setFieldValue("isLastSendDate", e.target.checked)
-                  }
-                />
-              </div>
-
-              {values.isLastSendDate && (
-                <div>
-                  <label>Last Send Date</label>
-                  <FormikField
-                    name="lastSendDate"
-                    type="datetime-local"
-                    className="form-control"
-                  />
-                </div>
-              )}
-            </>
-          )}
-
-          <div>
-            <Button type="submit" disabled={isSubmitting}>
-              Send Message
-            </Button>
-          </div>
-        </Form>
+      <div>
+        <label htmlFor="messageInput">Message Input</label>
+        <input
+          id="messageInput"
+          type="text"
+          placeholder="Enter Message"
+          value={formik.values.messageInput}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          className={formik.errors.messageInput && formik.touched.messageInput ? "input-error" : ""}
+        />
+        {formik.touched.messageInput && formik.errors.messageInput && (
+          <div style={{ color: "red" }}>{formik.errors.messageInput}</div>
+        )}
+      </div>
+      
+      {formik.values.sendMethod==="Scheduled"&&(
+        <>
+        <Scheduled formik={formik}/>
+        </>
       )}
-    </Formik>
+      {formik.values.sendMethod==="Batch"&&(
+        <>
+        <Batch formik={formik}/>
+        </>
+      )}
+
+      <button  disabled={formik.isSubmitting} type="submit">
+        Submit
+      </button>
+    </form>
   );
 };
-
 export default Formikp;
