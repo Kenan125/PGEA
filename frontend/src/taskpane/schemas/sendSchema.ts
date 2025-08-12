@@ -1,6 +1,14 @@
 import { format } from "date-fns";
 import * as yup from "yup";
+
 const today = format((new Date()), "yyyy-MM-dd'T'HH:mm");
+import { StringSchema } from "yup";
+
+declare module "yup" {
+  interface StringSchema {
+    phone(arg?: string | null, errorMessage?: string): StringSchema;
+  }
+}
 export const sendSchema = yup.object().shape({
   
   sendMethod: yup
@@ -18,7 +26,7 @@ export const sendSchema = yup.object().shape({
     .array()
     .of(
       yup.object().shape({
-        phoneNumber: yup.string().required("Phone number required"),
+        phoneNumber: yup.string().phone("TR").required("Phone number required"),
         sendDate: yup.string().nullable(),
       })
     ),

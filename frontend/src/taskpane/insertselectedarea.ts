@@ -14,6 +14,10 @@ export async function insertSelectedArea(text:string): Promise<boolean> {
       const values = Array.from({ length: selectedRange.rowCount }, () =>
         Array(selectedRange.columnCount).fill(text)
       );
+      selectedRange.numberFormat = Array.from(
+        { length: selectedRange.rowCount },
+        () => Array(selectedRange.columnCount).fill("@") // "@" = text format in Excel
+      );
 
       selectedRange.values = values;
       selectedRange.format.autofitColumns();
