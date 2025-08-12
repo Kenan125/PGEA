@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import Batch from "./Batch";
 import Scheduled from "./Scheduled";
 import ColumnDate from "./ColumnDate";
-
+import "../style/style.css"
 interface Recipient {
   phoneNumber: string;
   sendDate?: string;
@@ -144,7 +144,6 @@ const Formikp = () => {
       lastSendDate: "",
       messageInput: "",
       recipients: [],
-
       sendDate: "",
       batchSize: 0,
       intervalMinutes: 0,
@@ -158,7 +157,7 @@ const Formikp = () => {
   console.log(formik);
   return (
     <form onSubmit={formik.handleSubmit} autoComplete="off">
-      <>
+      <div className="my-test-background">
         {usedColumns.length > 0 && (
           <div>
             <label htmlFor="phoneNumberColumn">Select Phone Number Column</label>
@@ -179,11 +178,12 @@ const Formikp = () => {
               ))}
             </select>
             {formik.errors.recipients && typeof formik.errors.recipients === "string" && (
-              <div style={{ color: "red" }}>{formik.errors.recipients}</div>
-            )}
+            <div style={{ color: "red" }}>{formik.errors.recipients}</div>
+          )}
+            
           </div>
         )}
-      </>
+      </div>
       <label htmlFor="sendMethod"> Select Method</label>
       <select
         aria-required="true"
