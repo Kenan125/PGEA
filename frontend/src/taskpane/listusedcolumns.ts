@@ -3,27 +3,29 @@
 import { convertToColumnLetter } from "./convertToColumnLetter";
 import { listNumUsedColumns } from "./listnumusedColumns";
 
-export async function listUsedcolumns(): Promise<{columnLetters:string[],columnInfo:number[]}> {
+export async function listUsedcolumns(): Promise<{columnLetters:string[],columnNum:number[],startCol:number}> {
   try {
     return await Excel.run(async (context) => {
       const columnInfo = await listNumUsedColumns()       
-      const sheet = context.workbook.worksheets.getActiveWorksheet();
-      const usedRange = sheet.getUsedRange();
-      usedRange.load("columnCount, columnIndex, values,text,valueTypes");
+        
       await context.sync();     
       const columnLetters: string[] = [];
-      for (let i = 0; i < columnInfo.length; i++) {
-        if (usedRange.values[0][i] !== "") {
+      const columnNum =columnInfo.columnnum;
+      const startCol = columnInfo.startCol;
+      for (let i = 0; i < columnInfo.columnnum.length- columnInfo.startCol; i++) {
+        console.log("lu: " + i)
+        
           console.log(i);
-          const letter = await convertToColumnLetter(i);
+          const letter = await convertToColumnLetter(columnInfo.columnnum[i]);
           columnLetters.push(letter);
-        }
+        
       }      
       console.log("Used Columns:", columnLetters);
        
       return {
         columnLetters,
-        columnInfo
+        columnNum,
+        startCol
 
       };
     });
@@ -32,4 +34,3 @@ export async function listUsedcolumns(): Promise<{columnLetters:string[],columnI
     return error;
   }
 }
-

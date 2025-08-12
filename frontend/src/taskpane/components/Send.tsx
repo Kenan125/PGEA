@@ -52,12 +52,13 @@ const Send = (props: Partial<DropdownProps>) => {
   const handleListUsedColumns = async () => {
     const list = await listUsedcolumns();
     setUsedColumns(list.columnLetters);
-    setColNum(list.columnInfo);
+    setColNum(list.columnNum);
   };
   const handleReadColumn = async () => {
-      const result = await readColumn(usedNumColumns,text);
-      const parsed = JSON.parse(result);
-      setRecipients(parsed);
+    const list = await listUsedcolumns();
+      //const result = await readColumn(usedNumColumns-list.startCol,text);
+      //const parsed = JSON.parse(result);
+      //setRecipients(parsed);
     }
   
   const handleChecked = (e) => {
@@ -69,11 +70,7 @@ const Send = (props: Partial<DropdownProps>) => {
     }
   };
 
-  const handleSendMethod = (e) => {
-    const newValue = e.target.value;
-    console.log(newValue);
-    setSendMethod(newValue);
-  };
+ 
   function displaySendmethod(newValue: string) {
     if (newValue == "Batch") {
       return (
@@ -283,7 +280,7 @@ const Send = (props: Partial<DropdownProps>) => {
       </label> */}
       <Field validationMessage={sendMethodError}  validationState="warning" label="Send Method" required={true} aria-required="true" >
       
-      <Dropdown  aria-required="true" id={dropdownId} placeholder="Select Method" {...props} value={sendMethod} onOptionSelect={(_,data)=> setSendMethod(data.optionValue)}   >
+      <Dropdown  aria-required="true" id={dropdownId} placeholder="Select Method" {...props} value={sendMethod}  onOptionSelect={(_,data)=> {setSendMethod(data.optionValue); handleSendMethodSelect(data);} }   >
         {options.map((option) => (
           <Option key={option} aria-required="true">
             {option}
