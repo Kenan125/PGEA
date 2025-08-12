@@ -8,6 +8,10 @@ import { format } from "date-fns";
 import Batch from "./Batch";
 import Scheduled from "./Scheduled";
 import ColumnDate from "./ColumnDate";
+import Button from "./Button"
+
+
+
 
 interface Recipient {
   phoneNumber: string;
@@ -33,6 +37,9 @@ const Formikp = () => {
   const [usedColumns, setUsedColumns] = useState<string[]>([]);
   const [colNum, setColNum] = useState<number[]>([]);
   const today: string = format(new Date(), "yyyy-MM-dd'T'HH:mm'Z'");
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [recipient, setRecipient] = useState("")
 
   useEffect(() => {
     handleListUsedColumns();
@@ -160,8 +167,57 @@ const Formikp = () => {
     <form onSubmit={formik.handleSubmit} autoComplete="off">
       <>
         {usedColumns.length > 0 && (
-          <div>
-            <label htmlFor="phoneNumberColumn">Select Phone Number Column</label>
+
+          //container
+          <div id="container">
+              <div id="topRow">
+                <div id="leftColumn">
+                    <label htmlFor="messageInput">Message Input</label>
+                        <input
+                          id="messageInput"
+                          type="text"
+                          placeholder="Enter Message"
+                          value={formik.values.messageInput}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          className={formik.errors.messageInput && formik.touched.messageInput ? "input-error" : ""}
+                        />
+                        {formik.touched.messageInput && formik.errors.messageInput && (
+                          <div style={{ color: "red" }}>{formik.errors.messageInput}</div>
+                        )}
+                </div>
+                <div id="rightColumn">
+                  <div>SMS Sayısı: 1</div>
+                  <div>Son Ek: B043</div>
+                  <div>Karakter Uzunluğu: {Text.length}</div>
+
+                  {/* önizleme */}
+                  <Button
+              label={"Önizleme"}
+              type="TERTIARY"
+              onClick={() => {
+                // önce alıcı seçilmesi için
+                if (!recipient) {
+                  setErrorMessage("Lütfen önce alıcıyı seçiniz.");
+                  return;
+                }
+                setErrorMessage("");
+                setIsPreviewOpen(true)
+              }}
+            />
+            
+                </div>
+              </div>
+
+
+
+
+
+
+
+
+
+            <label id="label" htmlFor="phoneNumberColumn">Select Phone Number Column</label>
             <select
               id="phoneNumberColumn"
               name="selectedPhoneNumberColumn"
@@ -184,7 +240,7 @@ const Formikp = () => {
           </div>
         )}
       </>
-      <label htmlFor="sendMethod"> Select Method</label>
+      <label id="label" htmlFor="sendMethod"> Select Method</label>
       <select
         aria-required="true"
         id="sendMethod"
@@ -206,19 +262,7 @@ const Formikp = () => {
       )}
 
       <div>
-        <label htmlFor="messageInput">Message Input</label>
-        <input
-          id="messageInput"
-          type="text"
-          placeholder="Enter Message"
-          value={formik.values.messageInput}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          className={formik.errors.messageInput && formik.touched.messageInput ? "input-error" : ""}
-        />
-        {formik.touched.messageInput && formik.errors.messageInput && (
-          <div style={{ color: "red" }}>{formik.errors.messageInput}</div>
-        )}
+        
       </div>
 
       {formik.values.sendMethod === "Scheduled" && (

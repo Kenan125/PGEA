@@ -1,0 +1,25 @@
+/* Formikp
+.container{
+    backgroundColor: "#d9d9d9",
+    borderRadius: "0px 0px 12px 12px",
+    padding: "50px 30px",
+    width: "100%",
+    maxWidth: "600px",
+    margin: "20px auto",
+    boxSizing: "border-box",
+    fontFamily: "Segoe UI, sans-serif",
+    marginTop: "0px",
+};
+
+.label{
+    fontWeight: 600,
+    marginBottom: "4px",
+    color: "#353535",
+    fontSize: "15px"
+};
+
+rightColumn
+
+#phoneNumberColumn{}
+#sendMethod
+#messageInput */
