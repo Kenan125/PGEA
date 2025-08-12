@@ -34,6 +34,7 @@ module.exports = async (env, options) => {
     },
     module: {
       rules: [
+        
         {
           test: /\.ts$/,
           exclude: /node_modules/,
@@ -59,9 +60,10 @@ module.exports = async (env, options) => {
           },
         },
         {
-  test: /\.css$/i,
-  use: ["style-loader", "css-loader"],
-}
+
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      }
       ],
     },
     plugins: [
