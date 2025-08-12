@@ -138,10 +138,10 @@ const Formikp = () => {
     try {
       console.log("payload:", JSON.stringify(payload, null, 2));
       //await send(payload);
-      alert("Data sent successfully");
+      console.log("Data sent successfully");
     } catch (error) {
       console.error("Error sending data:", error);
-      alert("Error sending data. Check console.");
+      
     } finally {
       setSubmitting(false);
     }
@@ -268,22 +268,7 @@ const Formikp = () => {
                     Son Gönderim Tarihi Belirle
                   </label>
                 </div>
-                {showFinalDate && (
-                  <div className="dateTimeContainer">
-                    <input
-                      type="date"
-                      className="dateTimeInput"
-                      value={finalDate}
-                      onChange={(e) => setFinalDate(e.target.value)}
-                    />
-                    <input
-                      type="time"
-                      className="dateTimeInput"
-                      value={finalTime}
-                      onChange={(e) => setFinalTime(e.target.value)}
-                    />
-                  </div>
-                )}
+                
               </div>
               <div className="rightColumn">
                 {/* Alıcı */}
@@ -311,10 +296,10 @@ const Formikp = () => {
                 )}
               </div>
             </div>
-            <div className="buttonRow">
+            {/* <div className="buttonRow">
               <Button label={"İptal"} onClick={()=>("/")} type="SECONDARY" />
               <Button label={"Tamam"} onClick={formik.isSubmitting} type={"MAIN"}/>
-            </div>
+            </div> */}
           </div>
 
         )}
