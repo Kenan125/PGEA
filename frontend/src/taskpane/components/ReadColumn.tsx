@@ -26,7 +26,7 @@ const ReadColumn = () => {
   };
 
   const handleReadColumn = async () => {
-    await readColumn(usedNumColumns,text);
+    await readColumn(usedNumColumns);
   }
 
   const handleGetNumber = async () => {

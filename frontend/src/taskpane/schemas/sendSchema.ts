@@ -1,10 +1,11 @@
 import { format } from "date-fns";
 import * as yup from "yup";
+const today = format((new Date()), "yyyy-MM-dd'T'HH:mm");
 export const sendSchema = yup.object().shape({
-  test: yup.boolean(),
+  
   sendMethod: yup
     .string()
-    .oneOf(["Now", "Scheduled", "Batch", "ColumnDate"]) // corrected oneOf
+    .oneOf(["Now", "Scheduled", "Batch", "ColumnDate"]) 
     .required("Please select send method"),
   isLastSendDate: yup.boolean(),
   lastSendDate: yup.date().when("isLastSendDate", {
@@ -20,8 +21,7 @@ export const sendSchema = yup.object().shape({
         phoneNumber: yup.string().required("Phone number required"),
         sendDate: yup.string().nullable(),
       })
-    )
-    .min(1, "Please select a column to load recipients"),
+    ),
     batchSize: yup.number().when("sendMethod", {
     is: "Batch",
     then: (schema) => schema.required("Must enter batch size").min(1,"Batch size must be greater than 0"),
@@ -44,7 +44,13 @@ export const sendSchema = yup.object().shape({
   }),
   sendDate: yup.date().when("sendMethod", {
     is: (val:string)=> val=== "Scheduled" || val === "Batch" || val==="ColumnDate", 
-    then: (schema) => schema.required("Must select send date").min(yup.ref(String(new Date(Date.now()))), ' send date cannot be earlier than today'),
+    then: (schema) => schema.required("Must select send date").min( today, "Send date cannot be less than current date and time"),
     otherwise: (schema) => schema,
   }),
+  time: yup.string().when("sendMethod",{
+    is: "ColumnDate",
+    then: (schema)=> schema.required("Select time"),
+    otherwise: (schema)=>schema,
+  })
+
 });

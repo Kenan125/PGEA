@@ -56,9 +56,9 @@ const Send = (props: Partial<DropdownProps>) => {
   };
   const handleReadColumn = async () => {
     const list = await listUsedcolumns();
-      const result = await readColumn(usedNumColumns-list.startCol,text);
-      const parsed = JSON.parse(result);
-      setRecipients(parsed);
+      //const result = await readColumn(usedNumColumns-list.startCol,text);
+      //const parsed = JSON.parse(result);
+      //setRecipients(parsed);
     }
   
   const handleChecked = (e) => {
