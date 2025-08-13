@@ -36,7 +36,7 @@ export const sendSchema = yup.object().shape({
         }),
       })
     )
-    .min(1, "Please select a column to load recipients"),
+    .min(1, "Please select a column to load recipients"),    
   batchSize: yup.number().when("sendMethod", {
     is: "Batch",
     then: (schema) =>
