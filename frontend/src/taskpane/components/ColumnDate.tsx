@@ -4,8 +4,8 @@ const ColumnDate = ({ formik,usedColumns,handleColumnSelect }) => {
   return (
     <>
       {usedColumns.length>0 &&(
-        <div>
-          <label htmlFor="sendDate">Select Send Date Column</label>
+        <div className="dateRow">
+          <label htmlFor="sendDate">Tarih Sütunu Seçiniz</label>
         <select
           id="sendDate"
           name="selectedSendDateColumn"
@@ -26,9 +26,9 @@ const ColumnDate = ({ formik,usedColumns,handleColumnSelect }) => {
         </div>
 
       )}  
-      <div>
+      <div className="timeRow">
         <label htmlFor="time" className="form-label">
-          Time at selected Date
+          Gönderim Zamanı
         </label>
         <input
           id="time"

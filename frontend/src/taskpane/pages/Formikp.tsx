@@ -5,10 +5,10 @@ import { send } from "../send";
 import { listUsedcolumns } from "../listusedcolumns";
 import { readColumn } from "../ReadColumn";
 import { format } from "date-fns";
-import Batch from "./Batch";
-import Scheduled from "./Scheduled";
-import ColumnDate from "./ColumnDate";
-import Button from "./Button";
+import Batch from "../components/Batch";
+import Scheduled from "../components/Scheduled";
+import ColumnDate from "../components/ColumnDate";
+import Button from "../components/Button";
 import { MessageBar } from "@fluentui/react-components";
 import {useNavigate} from "react-router-dom"
 import "../style.css"
@@ -192,10 +192,10 @@ const Formikp = () => {
                   <div style={{ color: "red" }}>{formik.errors.messageInput}</div>
                 )}
               </div>
-              <div id="rightColumn">
+              <div className="rightColumn">
                 <div>SMS Sayısı: 1</div>
                 <div>Son Ek: B043</div>
-                <div>Karakter Uzunluğu: {Text.length}</div>
+                <div>Karakter Uzunluğu: {formik.values.messageInput.length}</div>
 
                 {/* önizleme */}
                 <Button
@@ -223,8 +223,8 @@ const Formikp = () => {
                     {errorMessage}
                     <Button
                     label={"Kapat"}
-                    type={"MAIN"}
-                    onClick={()=>navigation("/")}
+                    type={"TERTIARY"}
+                    onClick={()=>setErrorMessage("")}
                     />
                   </MessageBar>
                 )}
@@ -294,9 +294,10 @@ const Formikp = () => {
                   id="phoneNumberColumn"
                   name="selectedPhoneNumberColumn"
                   value={formik.values.selectedPhoneNumberColumn}
-                  onChange={(e) =>
-                    handleColumnSelect("selectedPhoneNumberColumn", e.target.value, "phoneNumber")
-                  }
+                  onChange={(e) =>{
+                    handleColumnSelect("selectedPhoneNumberColumn", e.target.value, "phoneNumber");
+                    setRecipient(e.target.value);
+                  }}
                   onBlur={formik.handleBlur}
                 >
                   <option label="Select a column" value="" disabled />
@@ -311,10 +312,7 @@ const Formikp = () => {
                 )}
               </div>
             </div>
-            <div className="buttonRow">
-              <Button label={"İptal"} onClick={()=>("/")} type="SECONDARY" />
-              <Button label={"Tamam"} onClick={formik.isSubmitting} type={"MAIN"}/>
-            </div>
+            
           </div>
 
         )}
@@ -337,6 +335,11 @@ const Formikp = () => {
           />
         </>
       )}
+
+      <div className="buttonRow">
+              <Button label={"İptal"} onClick={() => navigation("/")} type="SECONDARY"/> 
+              <Button label={"Tamam"} onClick={formik.handleSubmit} type={"MAIN"}/>
+            </div>
 
       {/* kenanın buton */}
       <button disabled={formik.isSubmitting} type="submit">

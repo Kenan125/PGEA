@@ -23,7 +23,8 @@ import Send from "./Send";
 import ReadColumn from "./ReadColumn";
 import { readColumn } from "../ReadColumn";
 import Header from "./Header";
-import Formikp from "./Formikp";
+import Formikp from "../pages/Formikp";
+import  Settings  from "../pages/Settings"
 
 
 
@@ -54,7 +55,8 @@ const App: React.FC<AppProps> = () => {
           <Link to="/Test">Test</Link> |<Link to="/send-scheduled">Send Scheduled</Link> |
           <Link to="/set-date">Set Date</Link> |<Link to="/get-date">Get Date</Link> |
           <Link to="/send">Send</Link>
-            | <Link to="/read-column">Read Column</Link>
+            | <Link to="/read-column">Read Column</Link> |
+            <Link to="/Settings">Settings</Link>
 
         </nav>
         <Routes>
@@ -77,6 +79,7 @@ const App: React.FC<AppProps> = () => {
           <Route path="/send"  element={<Send  /> } />
           <Route path="/formikp"  element={<Formikp  /> } />
           <Route path ="/read-column" element={<ReadColumn />} />
+          <Route path="/Settings" element={<Settings/>} />
         </Routes>
       </div>
     </MemoryRouter>
