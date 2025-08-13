@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { readSelectedArea } from "../readselectedarea";
 import { batchSend } from "../batchsend";
 import { send } from "../send";
-
+import "../style.css";
 
 const BatchSend = () => {
   const [recipients, setRecipients] = useState<Array<{ phoneNumber: string; sendDate: string }>>(
@@ -51,14 +51,14 @@ const BatchSend = () => {
         </div>
       );
     } else {
-      return <></>
+      return <></>;
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
-      sendMethod:2,
+      sendMethod: 2,
       isLastSendDate,
       lastSendDate,
       messageContent: {
@@ -87,6 +87,63 @@ const BatchSend = () => {
   };
   return (
     <form onSubmit={handleSubmit}>
+      <div className="container">
+        <div className="infoRow">Mesajlarınız aşağıdaki değerlere göre parçalanacaktır.</div>
+        <div className="dateRow">
+          <label className="label">Başlangıç Tarihi</label>
+          <input
+            id="sendDate"
+            className="form-control"
+            type="datetime-local"
+            value={sendDate}
+            onChange={(e) => setSendDate(e.target.value)}
+            required
+          />
+        </div>
+        <div className="intervalMinutes">
+          <label htmlFor="IntervalMinutes" className="form-label">
+            Interval Minutes
+          </label>
+          <input
+            id="IntervalMinutes"
+            className="form-control"
+            type="number"
+            value={intervalMinutes}
+            onChange={(e) => setIntervalMinutes(Number(e.target.value))}
+            required
+          />
+          <div className="batchSize">
+            <label htmlFor="BatchSize" className="form-label">
+              Batch Size
+            </label>
+            <input
+              id="BatchSize"
+              className="form-control"
+              type="number"
+              value={batchSize}
+              onChange={(e) => setBatchSize(Number(e.target.value))}
+              required
+            />
+          </div>
+          <div className="timeRestrictions">
+            <div className="start">
+            <label className="label" htmlFor="timeWindowStart">Başlangıç</label>
+            <input
+              id="timeWindowStart"
+              className="form-control"
+              type="time"
+              value={timeWindowStart}
+              onChange={(e) => setTimeWindowStart(e.target.value)}
+              required
+            />
+            </div>
+            <div className="end">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div>
         <label htmlFor="MessageInput" className="form-label">
           Message Input
@@ -100,44 +157,12 @@ const BatchSend = () => {
           required
         />
       </div>
-      <div>
-        <label htmlFor="BatchSize" className="form-label">
-          Batch Size
-        </label>
-        <input
-          id="BatchSize"
-          className="form-control"
-          type="number"
-          value={batchSize}
-          onChange={(e) => setBatchSize(Number(e.target.value))}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="IntervalMinutes" className="form-label">
-          Interval Minutes
-        </label>
-        <input
-          id="IntervalMinutes"
-          className="form-control"
-          type="number"
-          value={intervalMinutes}
-          onChange={(e) => setIntervalMinutes(Number(e.target.value))}
-          required
-        />
-      </div>
+      <div></div>
+      <div></div>
       <div>
         <label htmlFor="sendDate" className="form-label">
           Start Time
         </label>
-        <input
-          id="sendDate"
-          className="form-control"
-          type="datetime-local"
-          value={sendDate}
-          onChange={(e) => setSendDate(e.target.value)}
-          required
-        />
       </div>
       <div>
         <label htmlFor="isLastSendDate" className="form-label">
@@ -157,14 +182,7 @@ const BatchSend = () => {
         <label htmlFor="timeWindowStart" className="form-label">
           Time Window Start
         </label>
-        <input
-          id="timeWindowStart"
-          className="form-control"
-          type="time"
-          value={timeWindowStart}
-          onChange={(e) => setTimeWindowStart(e.target.value)}
-          required
-        />
+        
       </div>
       <div>
         <label htmlFor="timeWindowEnd" className="form-label">

@@ -2,9 +2,9 @@ import React from 'react'
 
 const Scheduled = ({formik}) => {
   return (
-        <div>
+        <div className='scheduled'>
         <label htmlFor="sendDate" className="form-label">
-          Start Time
+          Başlangıç Saati
         </label>
         <input
           id="sendDate"
