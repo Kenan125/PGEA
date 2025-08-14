@@ -13,13 +13,18 @@ export const sendSchema = yup.object().shape({
     then: (schema) => schema.required("Must enter last send date").min(yup.ref('sendDate'), 'Last send date cannot be earlier than start date'),
     otherwise: (schema) => schema,
   }),
-  messageInput: yup.string().required("Mesajınızı Giriniz"),
+
+  messageInput: yup.string().max(160,"karakter sayısı limiti 160'tır.").required("Mesajınızı Giriniz"),
+
   recipients: yup
     .array()
     .of(
       yup.object().shape({
         phoneNumber: yup.string().required("Phone number required"),
-        sendDate: yup.string().nullable(),
+        sendDate: yup.date().when("sendMethod", {
+          is:(val: string)=> val === "ColumnDate",
+          then: (schema) => schema.required("Must select send date column").min(today,"Send date cannot be less than current date")
+        })
       })
     ),
     batchSize: yup.number().when("sendMethod", {
@@ -43,8 +48,10 @@ export const sendSchema = yup.object().shape({
     otherwise: (schema) => schema,
   }),
   sendDate: yup.date().when("sendMethod", {
-    is: (val:string)=> val=== "İleri Tarihte Gönder" || val === "Parçalı Gönder" || val==="Sütundaki Tarihe Gönder", 
+
+    is: (val:string)=> val=== "İleri Tarihte Gönder" || val === "Parçalı Gönder"
     then: (schema) => schema.required("Tarih ve Saat Seçiniz").min( today, "Send date cannot be less than current date and time"),
+
     otherwise: (schema) => schema,
   }),
   time: yup.string().when("sendMethod",{

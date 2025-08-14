@@ -1,18 +1,27 @@
 import { format, formatISO, parse } from "date-fns";
 import { parsePhoneNumberWithError } from "libphonenumber-js";
 /* global Excel  */
-export async function readColumn(chsRow: number, str: string, time?: string): Promise<any[]> {
+export async function testMessage(
+  chsRow: number,
+  str: string,
+  time?: string,
+  
+): Promise<any[]> {
   try {
     return await Excel.run(async (context) => {
       const selectedRange = context.workbook.worksheets.getActiveWorksheet().getUsedRange();
-      selectedRange.load(["text"]);
+      selectedRange.load(["text","columnIndex"],);
       await context.sync();
+      
+    
       const values = selectedRange.text || [];
       let text = [];
       let extracted = [];
-      console.log(time + "time");
+      
+      
+      
 
-      console.log(time);
+      
 
       if (values !== null) {
         text = values.map((row) => row[chsRow] ?? "");
@@ -36,10 +45,12 @@ export async function readColumn(chsRow: number, str: string, time?: string): Pr
 
           for (let i = 0; i < text.length; i++) {
             const parsed = parse(String(text[i]), "dd/MM/yyyy", new Date());
-            extracted.push(format(new Date(parsed), `yyyy-MM-dd'T'${time}`));
+            extracted.push(format(new Date(parsed), `yyyy-MM-dd'T'${time}.sss'Z'`));
           }
           console.log("dateLLL::: " + extracted);
         }
+        
+        
       }
 
       return extracted;

@@ -19,6 +19,7 @@ const Settings = () => {
 
   return (
     <div>
+
       <div className="container">
         <label className="title">Ayarlar</label>
         <div className="charSet">
@@ -32,6 +33,7 @@ const Settings = () => {
             ))}
           </select>
         </div>
+
 
         <div className="buttonRow">
           <Button id={"geri"} label={"Geri"} onClick={() => navigate(-1)} type="SECONDARY" />

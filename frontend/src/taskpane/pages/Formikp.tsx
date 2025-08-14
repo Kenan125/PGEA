@@ -13,19 +13,25 @@ import { MessageBar } from "@fluentui/react-components";
 import { useNavigate } from "react-router-dom";
 import "../style.css";
 
+import { gettext } from "../gettext";
+
+
 interface Recipient {
   phoneNumber: string;
   sendDate?: string;
+  messageInput: string;
 }
 interface initialValues {
-  selectedPhoneNumberColumn: "";
-  selectedSendDateColumn: "";
+
   sendMethod:
     | ""
     | "Hemen Gönder"
     | "İleri Tarihte Gönder"
     | "Parçalı Gönder"
     | "Sütundaki Tarihe Gönder";
+  selectedPhoneNumberColumn: string;
+  selectedSendDateColumn: string;
+  selectedMessageInput: string,
   isLastSendDate: boolean;
   lastSendDate: string;
   messageInput: string;
@@ -46,7 +52,7 @@ const Formikp = () => {
   ];
   const [usedColumns, setUsedColumns] = useState<string[]>([]);
   const [colNum, setColNum] = useState<number[]>([]);
-  const today: string = format(new Date(), "yyyy-MM-dd'T'HH:mm'Z'");
+  const today: string = format(new Date(), "yyyy-MM-dd'T'HH:mm");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [recipient, setRecipient] = useState("");
@@ -83,31 +89,22 @@ const Formikp = () => {
 
     try {
       const list = await listUsedcolumns();
-      const values = await readColumn(absoluteColNum - list.startCol); // array of raw values
+      const values = await readColumn(absoluteColNum - list.startCol, targetField, time);
 
       const current = formik.values.recipients || [];
       const maxLen = Math.max(current.length, values.length);
+      const recipients: any[] = [];
 
-      const recipients = Array.from({ length: maxLen }).map((_, i) => {
+      for (let i = 0; i < maxLen; i++) {
         const existing = current[i] || { phoneNumber: "", sendDate: "" };
-        const val = values[i] ?? "";
+        const val = values[i] || "";
 
         if (targetField === "sendDate") {
-          // Try to parse date-like values robustly
-          const parsed =
-            val instanceof Date
-              ? val
-              : typeof val === "number"
-                ? new Date(val)
-                : new Date(String(val));
-          const sendDate =
-            parsed && !isNaN(parsed.getTime()) ? format(parsed, `yyyy-MM-dd'T'${time}'Z'`) : "";
-          return { ...existing, sendDate };
+          recipients.push({ ...existing, sendDate: val });
+        } else if (targetField === "phoneNumber") {
+          recipients.push({ ...existing, phoneNumber: val });
         }
-
-        // phone number column
-        return { ...existing, phoneNumber: String(val ?? "") };
-      });
+      }
 
       formik.setFieldValue("recipients", recipients);
     } catch (err) {
@@ -115,50 +112,90 @@ const Formikp = () => {
       formik.setFieldError("recipients", "Failed to read selected column");
     }
   };
+const handleMessageInput = async (formikField: string, columnLetter: string) => {
+    formik.setFieldValue(formikField, columnLetter);
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    if (values.sendMethod === "Hemen Gönder") {
-      values.sendDate = format(new Date(), "yyyy-MM-dd'T'HH:mm'Z'");
+
+    const index = usedColumns.findIndex((col) => col === columnLetter);
+    const absoluteColNum = colNum[index];
+    const list = await listUsedcolumns();
+    const values = await gettext(absoluteColNum - list.startCol);
+
+    const current = formik.values.recipients || [];
+    const maxLen = Math.max(current.length, values.length);
+    const recipients: any[] = [];
+
+    for (let i = 0; i < maxLen; i++) {
+      const existing = current[i] || {};
+      const val = values[i] || "";
+      recipients.push({
+        ...existing,
+        [`Column_${columnLetter}`]: val, // store dynamically
+      });
     }
 
-    const payload = {
-      sendMethod: values.sendMethod,
-      isLastSendDate: values.isLastSendDate,
-      lastSendDate: values.lastSendDate,
-      messageContent: {
-        messageInput: values.messageInput ? values.messageInput + " B043" : "",
-        recipients:
-          values.sendMethod === "ColumnDate"
-            ? values.recipients // keep per-recipient sendDate
-            : values.recipients.map((r) => ({
-                phoneNumber: r.phoneNumber,
-                sendDate: values.sendDate,
-              })),
-      },
-      batchSetting: {
-        batchSize: values.batchSize,
-        intervalMinutes: values.intervalMinutes,
-        timeWindowStart: values.timeWindowStart,
-        timeWindowEnd: values.timeWindowEnd,
-      },
-    };
-
-    try {
-      console.log("payload:", JSON.stringify(payload, null, 2));
-      //await send(payload);
-      alert("Data sent successfully");
-    } catch (error) {
-      console.error("Error sending data:", error);
-      alert("Error sending data. Check console.");
-    } finally {
-      setSubmitting(false);
-    }
+    formik.setFieldValue("recipients", recipients);
   };
+  const handleSubmit = async (values, { setSubmitting }) => {
+  if (values.sendMethod === "Hemen Gönder") {
+    values.sendDate = format(new Date(), "yyyy-MM-dd'T'HH:mm");
+  }
+
+  // Build recipients with replaced placeholders
+  const payloadRecipients = values.recipients.map((recipient) => {
+    let personalizedMessage = values.messageInput;
+
+    Object.keys(recipient).forEach((key) => {
+      if (key.startsWith("Column_")) {
+        const regex = new RegExp(`\\{${key}\\}`, "g");
+        personalizedMessage = personalizedMessage.replace(regex, recipient[key] || "");
+      }
+    });
+
+    return {
+      phoneNumber: recipient.phoneNumber,
+      sendDate:
+        values.sendMethod === "ColumnDate"
+          ? recipient.sendDate
+          : values.sendDate,
+      messageInput: personalizedMessage,
+
+    };
+  });
+
+  const payload = {
+    sendMethod: values.sendMethod,
+    isLastSendDate: values.isLastSendDate,
+    lastSendDate: values.lastSendDate,
+    messageContent: {
+      recipients: payloadRecipients,
+    },
+    batchSetting: {
+      batchSize: values.batchSize,
+      intervalMinutes: values.intervalMinutes,
+      timeWindowStart: values.timeWindowStart,
+      timeWindowEnd: values.timeWindowEnd,
+    },
+  };
+
+  try {
+    console.log("payload:", JSON.stringify(payload, null, 2));
+    // await send(payload);
+    alert("Data sent successfully");
+  } catch (error) {
+    console.error("Error sending data:", error);
+    alert("Error sending data. Check console.");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   const formik = useFormik<initialValues>({
     initialValues: {
       selectedPhoneNumberColumn: "",
       selectedSendDateColumn: "",
+      selectedMessageInput: "",
       sendMethod: "",
       isLastSendDate: false,
       lastSendDate: "",
@@ -192,15 +229,11 @@ const Formikp = () => {
                   value={formik.values.messageInput}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className={
-                    formik.errors.messageInput && formik.touched.messageInput ? "input-error" : ""
-                  }
                 />
-                {formik.touched.messageInput && formik.errors.messageInput && (
-                  <div style={{ color: "red" }}>{formik.errors.messageInput}</div>
-                )}
               </div>
+
               <div className="rightColumn">
+
                 <div className="topRight">
                   <div>SMS Sayısı: 1</div>
                   <div>Son Ek: B043</div> 
@@ -223,19 +256,42 @@ const Formikp = () => {
                   }}
                 />
 
-                {errorMessage && (
-                  <MessageBar intent="error">
-                    {errorMessage}
-                    <Button id={"kapat"} label={"Kapat"} type={"TERTIARY"} onClick={() => setErrorMessage("")} />
-                  </MessageBar>
-                )}
+               
 
-                {/* kişiselleştir */}
-                {/* <Button
-                label={"Kişiselleştir"}
-                type={"TERTIARY"}
-                onClick={}
-                /> */}
+                
+
+                <label id="label" htmlFor="messageColumn">
+                  Select custom message column
+                </label>
+                <select
+                  id="messageColumn"
+                  name="selectedMessageInput"
+                  value={formik.values.selectedMessageInput}
+                  onChange={async (e) => {
+                    const colLetter = e.target.value;
+
+                    // Store the column letter in formik
+                    formik.setFieldValue("selectedMessageInput", colLetter);
+
+                    // Fetch the column values and store under Column_X in recipients
+                    await handleMessageInput(`Column_${colLetter}`, colLetter);
+
+                    // Append a placeholder into the message template
+                    formik.setFieldValue(
+                      "messageInput",
+                      formik.values.messageInput + `{Column_${colLetter}}`
+                    );
+                  }}
+                  onBlur={formik.handleBlur}
+                >
+                  <option label="Select a column" value="" disabled />
+                  {usedColumns.map((col, index) => (
+                    <option key={index} value={col}>
+                      {col}
+                    </option>
+                  ))}
+                </select>
+
               </div>
             </div>
             <div className="bottomRow">
@@ -264,7 +320,20 @@ const Formikp = () => {
                 {formik.touched.sendMethod && formik.errors.sendMethod && (
                   <div style={{ color: "red" }}>{formik.errors.sendMethod}</div>
                 )}
-                
+
+                {/*checkbox*/}
+                <div className="checkboxContainer">
+                  <input
+                    type="checkbox"
+                    id="finalDateCheckbox"
+                    checked={showFinalDate}
+                    onChange={(e) => setShowFinalDate(e.target.checked)}
+                  />
+                  <label htmlFor="finalDateCheckbox" className="checkBoxLabel">
+                    Son Gönderim Tarihi Belirle
+                  </label>
+                </div>
+
               </div>
               <div className="rightColumn">
                 {/* Alıcı */}
@@ -295,17 +364,23 @@ const Formikp = () => {
             </div>
           </div>
         )}
+
         {formik.values.sendMethod === "İleri Tarihte Gönder" && (
+
           <>
             <Scheduled formik={formik} />
           </>
         )}
+
         {formik.values.sendMethod === "Parçalı Gönder" && (
+
           <>
             <Batch formik={formik} />
           </>
         )}
+
         {formik.values.sendMethod === "Sütundaki Tarihe Gönder" && (
+
           <>
             <ColumnDate
               formik={formik}
@@ -314,6 +389,7 @@ const Formikp = () => {
             />
           </>
         )}
+
         <div >
           {/*checkbox buraya*/}
                 <div className="checkbox">
