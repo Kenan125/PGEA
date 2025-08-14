@@ -55,6 +55,7 @@ const Header = (props) => {
       {!isSettingsPage && (
         <div className={styles.settingsButton}>
         <Button
+        id={"ayarlar"}
         label={"Ayarlar"}
         onClick={()=>navigate("/Settings")}
         type="TERTIARY"
