@@ -30,7 +30,7 @@ const useStyles=makeStyles({
     }
 })
 
-const Button = ({label,onClick,type}) => {
+const Button = ({id,label,onClick,type}) => {
     const styles=useStyles();
     const navigate=useNavigate();
     const record ={
@@ -40,7 +40,7 @@ const Button = ({label,onClick,type}) => {
     }
 
   return (
-    <button className={record[type]} onClick={onClick} >{label}</button>
+    <button id={id} className={record[type]} onClick={onClick} >{label}</button>
   )
 }
 

@@ -10,11 +10,8 @@ import Scheduled from "../components/Scheduled";
 import ColumnDate from "../components/ColumnDate";
 import Button from "../components/Button";
 import { MessageBar } from "@fluentui/react-components";
-import {useNavigate} from "react-router-dom"
-import "../style.css"
-
-
-
+import { useNavigate } from "react-router-dom";
+import "../style.css";
 
 interface Recipient {
   phoneNumber: string;
@@ -23,7 +20,12 @@ interface Recipient {
 interface initialValues {
   selectedPhoneNumberColumn: "";
   selectedSendDateColumn: "";
-  sendMethod: "" | "Now" | "Scheduled" | "Batch" | "ColumnDate";
+  sendMethod:
+    | ""
+    | "Hemen Gönder"
+    | "İleri Tarihte Gönder"
+    | "Parçalı Gönder"
+    | "Sütundaki Tarihe Gönder";
   isLastSendDate: boolean;
   lastSendDate: string;
   messageInput: string;
@@ -36,16 +38,18 @@ interface initialValues {
   time?: string;
 }
 const Formikp = () => {
-  const options = ["Now", "Scheduled", "Batch", "ColumnDate"];
+  const options = [
+    "Hemen Gönder",
+    "İleri Tarihte Gönder",
+    "Parçalı Gönder",
+    "Sütundaki Tarihe Gönder",
+  ];
   const [usedColumns, setUsedColumns] = useState<string[]>([]);
   const [colNum, setColNum] = useState<number[]>([]);
   const today: string = format(new Date(), "yyyy-MM-dd'T'HH:mm'Z'");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [recipient, setRecipient] = useState("");
-  const [showFinalDate, setShowFinalDate] = useState(false);
-  const [finalDate, setFinalDate] = useState("");
-  const [finalTime, setFinalTime] = useState("");
   const navigation = useNavigate();
 
   useEffect(() => {
@@ -62,6 +66,10 @@ const Formikp = () => {
     }
   };
 
+  const handleCancel = () => {
+  formik.resetForm(); 
+  navigation("/"); 
+};
   const handleColumnSelect = async (
     formikField: string,
     columnLetter: string,
@@ -109,7 +117,7 @@ const Formikp = () => {
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    if (values.sendMethod === "Now") {
+    if (values.sendMethod === "Hemen Gönder") {
       values.sendDate = format(new Date(), "yyyy-MM-dd'T'HH:mm'Z'");
     }
 
@@ -118,7 +126,7 @@ const Formikp = () => {
       isLastSendDate: values.isLastSendDate,
       lastSendDate: values.lastSendDate,
       messageContent: {
-        messageInput: values.messageInput,
+        messageInput: values.messageInput ? values.messageInput + " B043" : "",
         recipients:
           values.sendMethod === "ColumnDate"
             ? values.recipients // keep per-recipient sendDate
@@ -173,10 +181,10 @@ const Formikp = () => {
       <div className="my-test-background">
         {usedColumns.length > 0 && (
           //container
-          <div >
+          <div>
             <div className="topRow">
               <div className="leftColumn">
-                <label htmlFor="messageInput">Message Input</label>
+                <label htmlFor="messageInput">Mesajınız</label>
                 <input
                   id="messageInput"
                   type="text"
@@ -193,17 +201,20 @@ const Formikp = () => {
                 )}
               </div>
               <div className="rightColumn">
-                <div>SMS Sayısı: 1</div>
-                <div>Son Ek: B043</div>
-                <div>Karakter Uzunluğu: {formik.values.messageInput.length}</div>
-
+                <div className="topRight">
+                  <div>SMS Sayısı: 1</div>
+                  <div>Son Ek: B043</div> 
+                  <div>Karakter Uzunluğu: {formik.values.messageInput.length}</div>{" "}
+                </div>
                 {/* önizleme */}
+
                 <Button
+                  id={"preview"}
                   label={"Önizleme"}
                   type="TERTIARY"
                   onClick={() => {
                     // önce alıcı seçilmesi için recipient i telefon sütunuyla değiştir
-                    if (!recipient) { 
+                    if (!recipient) {
                       setErrorMessage("Lütfen önce alıcıyı seçiniz.");
                       return;
                     }
@@ -211,23 +222,20 @@ const Formikp = () => {
                     setIsPreviewOpen(true);
                   }}
                 />
+
                 {errorMessage && (
-                  <MessageBar
-                    intent="error"
-                    // actions={{
-                    //   children: "Kapat",
-                    //   onClick: () => setErrorMessage(""),
-                    // }}
-                    // style={{ marginTop: "10px" }}
-                  >
+                  <MessageBar intent="error">
                     {errorMessage}
-                    <Button
-                    label={"Kapat"}
-                    type={"TERTIARY"}
-                    onClick={()=>setErrorMessage("")}
-                    />
+                    <Button id={"kapat"} label={"Kapat"} type={"TERTIARY"} onClick={() => setErrorMessage("")} />
                   </MessageBar>
                 )}
+
+                {/* kişiselleştir */}
+                {/* <Button
+                label={"Kişiselleştir"}
+                type={"TERTIARY"}
+                onClick={}
+                /> */}
               </div>
             </div>
             <div className="bottomRow">
@@ -235,7 +243,7 @@ const Formikp = () => {
                 {/* Gönderim Şekli */}
                 <label id="label" htmlFor="sendMethod">
                   {" "}
-                  Select Method
+                  Gönderim Şekli
                 </label>
                 <select
                   aria-required="true"
@@ -245,7 +253,7 @@ const Formikp = () => {
                   onBlur={formik.handleBlur}
                 >
                   <option value="" disabled>
-                    Select Method
+                    Seçiniz
                   </option>
                   {options.map((option) => (
                     <option key={option} value={option}>
@@ -256,51 +264,24 @@ const Formikp = () => {
                 {formik.touched.sendMethod && formik.errors.sendMethod && (
                   <div style={{ color: "red" }}>{formik.errors.sendMethod}</div>
                 )}
-                {/*checkbox*/}
-                <div className="checkboxContainer">
-                  <input
-                    type="checkbox"
-                    id="finalDateCheckbox"
-                    checked={showFinalDate}
-                    onChange={(e) => setShowFinalDate(e.target.checked)}
-                  />
-                  <label htmlFor="finalDateCheckbox" className="checkBoxLabel">
-                    Son Gönderim Tarihi Belirle
-                  </label>
-                </div>
-                {showFinalDate && (
-                  <div className="dateTimeContainer">
-                    <input
-                      type="date"
-                      className="dateTimeInput"
-                      value={finalDate}
-                      onChange={(e) => setFinalDate(e.target.value)}
-                    />
-                    <input
-                      type="time"
-                      className="dateTimeInput"
-                      value={finalTime}
-                      onChange={(e) => setFinalTime(e.target.value)}
-                    />
-                  </div>
-                )}
+                
               </div>
               <div className="rightColumn">
                 {/* Alıcı */}
                 <label id="label" htmlFor="phoneNumberColumn">
-                  Select Phone Number Column
+                  Alıcı
                 </label>
                 <select
                   id="phoneNumberColumn"
                   name="selectedPhoneNumberColumn"
                   value={formik.values.selectedPhoneNumberColumn}
-                  onChange={(e) =>{
+                  onChange={(e) => {
                     handleColumnSelect("selectedPhoneNumberColumn", e.target.value, "phoneNumber");
                     setRecipient(e.target.value);
                   }}
                   onBlur={formik.handleBlur}
                 >
-                  <option label="Select a column" value="" disabled />
+                  <option label="Sütun seçiniz" value="" disabled />
                   {usedColumns.map((col, index) => (
                     <option key={index} value={col}>
                       {col}
@@ -312,44 +293,98 @@ const Formikp = () => {
                 )}
               </div>
             </div>
-            
           </div>
-
         )}
-        {formik.values.sendMethod === "Scheduled" && (
-        <>
-          <Scheduled formik={formik} />
-        </>
-      )}
-      {formik.values.sendMethod === "Batch" && (
-        <>
-          <Batch formik={formik} />
-        </>
-      )}
-      {formik.values.sendMethod === "ColumnDate" && (
-        <>
-          <ColumnDate
-            formik={formik}
-            usedColumns={usedColumns}
-            handleColumnSelect={handleColumnSelect}
-          />
-        </>
-      )}
+        {formik.values.sendMethod === "İleri Tarihte Gönder" && (
+          <>
+            <Scheduled formik={formik} />
+          </>
+        )}
+        {formik.values.sendMethod === "Parçalı Gönder" && (
+          <>
+            <Batch formik={formik} />
+          </>
+        )}
+        {formik.values.sendMethod === "Sütundaki Tarihe Gönder" && (
+          <>
+            <ColumnDate
+              formik={formik}
+              usedColumns={usedColumns}
+              handleColumnSelect={handleColumnSelect}
+            />
+          </>
+        )}
+        <div >
+          {/*checkbox buraya*/}
+                <div className="checkbox">
+                  <input
+                    type="checkbox"
+                    id="isLastSendDate"
+                    className="form-control"
+                    checked={formik.values.isLastSendDate}
+                    onChange={(e) => formik.setFieldValue("isLastSendDate", e.target.checked)}
+                  />
+                  <label htmlFor="isLastSendDate" className="checkbox-title">
+                    Son Gönderim Tarihi Belirle
+                  </label>
+                  
+                </div>
+                
+                  {formik.values.isLastSendDate && (
+                    <div className="lastSendDate" >
+                      <label htmlFor="lastSendDate" className="checkbox-label">
+                        Son Gönderim Tarihi
+                      </label>
+                      <input
+                        id="lastSendDate"
+                        className="checkbox-form-control"
+                        type="datetime-local"
+                        value={formik.values.lastSendDate}
+                        onChange={formik.handleChange}
+                      />
+                      
+                    </div>
+                    
+                  )}
+                  {formik.touched.lastSendDate && formik.errors.lastSendDate && (
+                        <div className="error">{formik.errors.lastSendDate}</div>
+                      )}
+                
+        </div>
+        
 
-      <div className="buttonRow">
-              <Button label={"İptal"} onClick={() => navigation("/")} type="SECONDARY"/> 
-              <Button label={"Tamam"} onClick={formik.handleSubmit} type={"MAIN"}/>
-            </div>
+        <div className="buttonRow">
+          <Button id={"iptal"} label={"İptal"} onClick={handleCancel} type="SECONDARY" />
+          {/* <Button id={"tamam"}   label={"Tamam"} onClick={formik.handleSubmit} type={"MAIN"} /> */}
+          
+        <button disabled={formik.isSubmitting} type="submit" className="mainButton">
+          Tamam
+        </button>
+        </div>
 
-      {/* kenanın buton */}
-      <button disabled={formik.isSubmitting} type="submit">
-        Submit
-      </button>
+        
       </div>
 
-      
+       {isPreviewOpen && (
+        <div className="preview-container">
+          <div className="preview-content">
+            <label className="preview-title">Mesaj Önizlemesi</label>
+            <p className="preview-message">
+              {formik.values.messageInput ? formik.values.messageInput  : "Boş Mesaj"}
+            </p>
 
+            
+
+            <div className="preview-button">
+              <Button id={"kapat"} label={"Kapat"} onClick={() => setIsPreviewOpen(false)} type={"MAIN"} />
+            </div>
+          </div>
+        </div>
+      )} 
       
+  
+
+
     </form>
   );
 };

@@ -46,7 +46,7 @@ const App: React.FC<AppProps> = () => {
     <MemoryRouter>
       <Header logo="./assets/postaguvercinilogodaire.png" message="Posta Güvercini" />
       <div className={styles.root}>
-        <nav>
+        {/* <nav>
           <Link to="/insert-text">Insert Text To Area</Link> |
           <Link to="/send">Send</Link> | <Link to="/formikp">Formik</Link>
           <Link to="/">Home</Link> | |
@@ -58,8 +58,9 @@ const App: React.FC<AppProps> = () => {
             | <Link to="/read-column">Read Column</Link> |
             <Link to="/Settings">Settings</Link>
 
-        </nav>
+        </nav> */}
         <Routes>
+           <Route path="/" element={<Formikp />} />
           <Route
             path="/insert-text"
             element={<InsertTextToSelection insertSelectedArea={insertSelectedArea} />}

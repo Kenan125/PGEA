@@ -5,7 +5,7 @@ export const sendSchema = yup.object().shape({
   
   sendMethod: yup
     .string()
-    .oneOf(["Now", "Scheduled", "Batch", "ColumnDate"]) 
+    .oneOf(["Hemen Gönder", "İleri Tarihte Gönder", "Parçalı Gönder", "Sütundaki Tarihe Gönder"]) 
     .required("Please select send method"),
   isLastSendDate: yup.boolean(),
   lastSendDate: yup.date().when("isLastSendDate", {
@@ -13,7 +13,7 @@ export const sendSchema = yup.object().shape({
     then: (schema) => schema.required("Must enter last send date").min(yup.ref('sendDate'), 'Last send date cannot be earlier than start date'),
     otherwise: (schema) => schema,
   }),
-  messageInput: yup.string().required("Please enter message"),
+  messageInput: yup.string().required("Mesajınızı Giriniz"),
   recipients: yup
     .array()
     .of(
@@ -23,34 +23,36 @@ export const sendSchema = yup.object().shape({
       })
     ),
     batchSize: yup.number().when("sendMethod", {
-    is: "Batch",
-    then: (schema) => schema.required("Must enter batch size").min(1,"Batch size must be greater than 0"),
+    is: "Parçalı Gönder",
+    then: (schema) => schema.required("Parça Sayısını Giriniz").min(1,"Parça sayısı 0'dan büyük olmalı."),
     otherwise: (schema) => schema,
   }),
   intervalMinutes: yup.number().when("sendMethod", {
-    is: "Batch",
+    is: "Parçalı Gönder",
     then: (schema) => schema.required("Must enter interval minutes").min(1,"Interval Minutes must be greater than 0"),
     otherwise: (schema) => schema,
   }),
   timeWindowStart: yup.string().when("sendMethod", {
-    is: "Batch",
+    is: "Parçalı Gönder",
     then: (schema) => schema.required("Must select start time window"),
     otherwise: (schema) => schema,
   }),
   timeWindowEnd: yup.string().when("sendMethod", {
-    is: "Batch",
+    is: "Parçalı Gönder",
     then: (schema) => schema.required("Must select end time window"),
     otherwise: (schema) => schema,
   }),
   sendDate: yup.date().when("sendMethod", {
-    is: (val:string)=> val=== "Scheduled" || val === "Batch" || val==="ColumnDate", 
-    then: (schema) => schema.required("Must select send date").min( today, "Send date cannot be less than current date and time"),
+    is: (val:string)=> val=== "İleri Tarihte Gönder" || val === "Parçalı Gönder" || val==="Sütundaki Tarihe Gönder", 
+    then: (schema) => schema.required("Tarih ve Saat Seçiniz").min( today, "Send date cannot be less than current date and time"),
     otherwise: (schema) => schema,
   }),
   time: yup.string().when("sendMethod",{
-    is: "ColumnDate",
+    is: "Sütundaki Tarihe Gönder",
     then: (schema)=> schema.required("Select time"),
     otherwise: (schema)=>schema,
   })
+  
+  
 
 });
