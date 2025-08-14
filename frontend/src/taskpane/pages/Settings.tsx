@@ -28,8 +28,9 @@ const Settings=()=>{
         <div className="container">
             
             <div className="charSet">
-                <label className="label">Karakter Seti</label>
+                <label htmlFor='charSet' className="label">Karakter Seti</label>
                     <select
+                        name="CharSet"
                         id='charSet'
                         // label={"Karakter Seti"}
                         value={charSet}
