@@ -3,6 +3,8 @@
 import { convertToColumnLetter } from "./convertToColumnLetter";
 import { listNumUsedColumns } from "./listnumusedColumns";
 
+
+
 export async function listUsedcolumns(): Promise<{columnLetters:string[],columnNum:number[],startCol:number}> {
   try {
     return await Excel.run(async (context) => {

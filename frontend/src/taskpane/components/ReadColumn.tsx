@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { readSelectedArea } from "../readselectedarea";
 
 import { format } from "date-fns";
-import { listNumUsedColumns } from "../listnumusedColumns";
+import { listNumUsedColumns } from "../helpers/listnumusedColumns";
 import { readColumn } from "../ReadColumn";
-import { listUsedcolumns } from "../listusedcolumns";
+import { listUsedcolumns } from "../helpers/listusedcolumns";
+
 
 
 

@@ -18,11 +18,11 @@ import { setDate } from "../setdate";
 import SetDate from "./SetDate";
 import { getDate } from "../getdate";
 import GetDate from "./GetDate";
-import { listUsedcolumns } from "../listusedcolumns";
+
 import Send from "./Send";
 import ReadColumn from "./ReadColumn";
-import { readColumn } from "../ReadColumn";
-import Header from "./Header";
+
+import Header from "../pages/Header";
 import Formikp from "../pages/Formikp";
 import  Settings  from "../pages/Settings"
 import TestMessage from "../testsome/TestMessage";

@@ -17,6 +17,7 @@ const ColumnDate = ({ formik,usedColumns,handleColumnSelect }) => {
         <div className="dateRow">
           <label htmlFor="sendDate">Tarih Sütunu Seçiniz</label>
         <select
+        title="senDate"
           id="sendDateColumn"
           className="form-control"
           name="selectedSendDateColumn"

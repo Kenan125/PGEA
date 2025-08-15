@@ -9,7 +9,8 @@ import {
   Dropdown,
   Option,
 } from "@fluentui/react-components";
-import { listUsedcolumns } from "../listusedcolumns";
+import { listUsedcolumns } from "../helpers/listusedcolumns";
+
 
 interface GetDateProps {
   getDate: (range: number, time: string) => Promise<boolean>;

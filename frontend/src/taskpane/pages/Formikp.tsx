@@ -1,19 +1,19 @@
 import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik } from "formik";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { sendSchema } from "../schemas/sendSchema";
 import { send } from "../send";
 import { listUsedcolumns } from "../listusedcolumns";
 import { readColumn } from "../ReadColumn";
 import { format } from "date-fns";
-import Batch from "../components/Batch";
-import Scheduled from "../components/Scheduled";
-import ColumnDate from "../components/ColumnDate";
+import Batch from "./Batch";
+import Scheduled from "./Scheduled";
+import ColumnDate from "./ColumnDate";
 import Button from "../components/Button";
-import { MessageBar } from "@fluentui/react-components";
 import { useNavigate } from "react-router-dom";
 import "../style.css";
 
 import { gettext } from "../gettext";
+
 
 interface Recipient {
   phoneNumber: string;
@@ -21,6 +21,7 @@ interface Recipient {
   messageInput: string;
 }
 interface initialValues {
+
   sendMethod:
     | ""
     | "Hemen Gönder"
@@ -29,7 +30,7 @@ interface initialValues {
     | "Sütundaki Tarihe Gönder";
   selectedPhoneNumberColumn: string;
   selectedSendDateColumn: string;
-  selectedMessageInput: string;
+  selectedMessageInput: string,
   isLastSendDate: boolean;
   lastSendDate: string;
   messageInput: string;
@@ -55,8 +56,6 @@ const Formikp = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [recipient, setRecipient] = useState("");
   const navigation = useNavigate();
-  const messageSelectRef = useRef<HTMLSelectElement>(null);
-  const [showCustomizeSelect, setShowCustomizeSelect] = useState(false);
 
   useEffect(() => {
     handleListUsedColumns();
@@ -73,9 +72,9 @@ const Formikp = () => {
   };
 
   const handleCancel = () => {
-    formik.resetForm();
-    navigation("/");
-  };
+  formik.resetForm(); 
+  navigation("/"); 
+};
   const handleColumnSelect = async (
     formikField: string,
     columnLetter: string,
@@ -112,8 +111,9 @@ const Formikp = () => {
       formik.setFieldError("recipients", "Failed to read selected column");
     }
   };
-  const handleMessageInput = async (formikField: string, columnLetter: string) => {
+const handleMessageInput = async (formikField: string, columnLetter: string) => {
     formik.setFieldValue(formikField, columnLetter);
+
 
     const index = usedColumns.findIndex((col) => col === columnLetter);
     const absoluteColNum = colNum[index];
@@ -136,54 +136,59 @@ const Formikp = () => {
     formik.setFieldValue("recipients", recipients);
   };
   const handleSubmit = async (values, { setSubmitting }) => {
-    if (values.sendMethod === "Hemen Gönder") {
-      values.sendDate = format(new Date(), "yyyy-MM-dd'T'HH:mm");
-    }
+  if (values.sendMethod === "Hemen Gönder") {
+    values.sendDate = format(new Date(), "yyyy-MM-dd'T'HH:mm");
+  }
 
-    // Build recipients with replaced placeholders
-    const payloadRecipients = values.recipients.map((recipient) => {
-      let personalizedMessage = values.messageInput;
+  // Build recipients with replaced placeholders
+  const payloadRecipients = values.recipients.map((recipient) => {
+    let personalizedMessage = values.messageInput;
 
-      Object.keys(recipient).forEach((key) => {
-        if (key.startsWith("Column_")) {
-          const regex = new RegExp(`\\{${key}\\}`, "g");
-          personalizedMessage = personalizedMessage.replace(regex, recipient[key] || "");
-        }
-      });
-
-      return {
-        phoneNumber: recipient.phoneNumber,
-        sendDate: values.sendMethod === "ColumnDate" ? recipient.sendDate : values.sendDate,
-        messageInput: personalizedMessage,
-      };
+    Object.keys(recipient).forEach((key) => {
+      if (key.startsWith("Column_")) {
+        const regex = new RegExp(`\\{${key}\\}`, "g");
+        personalizedMessage = personalizedMessage.replace(regex, recipient[key] || "");
+      }
     });
 
-    const payload = {
-      sendMethod: values.sendMethod,
-      isLastSendDate: values.isLastSendDate,
-      lastSendDate: values.lastSendDate,
-      messageContent: {
-        recipients: payloadRecipients,
-      },
-      batchSetting: {
-        batchSize: values.batchSize,
-        intervalMinutes: values.intervalMinutes,
-        timeWindowStart: values.timeWindowStart,
-        timeWindowEnd: values.timeWindowEnd,
-      },
-    };
+    return {
+      phoneNumber: recipient.phoneNumber,
+      sendDate:
+        values.sendMethod === "ColumnDate"
+          ? recipient.sendDate
+          : values.sendDate,
+      messageInput: personalizedMessage,
 
-    try {
-      console.log("payload:", JSON.stringify(payload, null, 2));
-      // await send(payload);
-      alert("Data sent successfully");
-    } catch (error) {
-      console.error("Error sending data:", error);
-      alert("Error sending data. Check console.");
-    } finally {
-      setSubmitting(false);
-    }
+    };
+  });
+
+  const payload = {
+    sendMethod: values.sendMethod,
+    isLastSendDate: values.isLastSendDate,
+    lastSendDate: values.lastSendDate,
+    messageContent: {
+      recipients: payloadRecipients,
+    },
+    batchSetting: {
+      batchSize: values.batchSize,
+      intervalMinutes: values.intervalMinutes,
+      timeWindowStart: values.timeWindowStart,
+      timeWindowEnd: values.timeWindowEnd,
+    },
   };
+
+  try {
+    console.log("payload:", JSON.stringify(payload, null, 2));
+    // await send(payload);
+    alert("Data sent successfully");
+  } catch (error) {
+    console.error("Error sending data:", error);
+    alert("Error sending data. Check console.");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   const formik = useFormik<initialValues>({
     initialValues: {
@@ -251,52 +256,43 @@ const Formikp = () => {
                   }}
                 />
 
-                {/* <label id="label" htmlFor="messageColumn">
+               
+
+                
+
+                <label id="label" htmlFor="messageColumn">
                   Select custom message column
-                </label> */}
-                <Button
-                  id={"customize"}
-                  label={"Kişiselleştir"}
-                  onClick={() => {
-                    setShowCustomizeSelect(true);
-                    setTimeout(() => {
-                      if (messageSelectRef.current) {
-                        messageSelectRef.current.focus();
-                        messageSelectRef.current.click();
-                      }
-                    }, 0);
+                </label>
+                <select
+                  id="messageColumn"
+                  name="selectedMessageInput"
+                  value={formik.values.selectedMessageInput}
+                  onChange={async (e) => {
+                    const colLetter = e.target.value;
+
+                    // Store the column letter in formik
+                    formik.setFieldValue("selectedMessageInput", colLetter);
+
+                    // Fetch the column values and store under Column_X in recipients
+                    await handleMessageInput(`Column_${colLetter}`, colLetter);
+
+                    // Append a placeholder into the message template
+                    formik.setFieldValue(
+                      "messageInput",
+                      formik.values.messageInput + `{Column_${colLetter}}`
+                    );
                   }}
-                  type={"TERTIARY"}
-                />
+                  onBlur={formik.handleBlur}
+                >
+                  <option label="Select a column" value="" disabled />
+                  {usedColumns.map((col, index) => (
+                    <option key={index} value={col}>
+                      {col}
+                    </option>
+                  ))}
+                </select>
+
               </div>
-              {showCustomizeSelect && (
-                <div className="customize">
-                  <label className="label">Kişiselletirmek İçin Sütun Seçin</label>
-                  <select
-                    ref={messageSelectRef}
-                    id="messageColumn"
-                    name="selectedMessageInput"
-                    value={formik.values.selectedMessageInput}
-                    onChange={async (e) => {
-                      const colLetter = e.target.value;
-                      formik.setFieldValue("selectedMessageInput", colLetter);
-                      await handleMessageInput(`Column_${colLetter}`, colLetter);
-                      formik.setFieldValue(
-                        "messageInput",
-                        formik.values.messageInput + `{Column_${colLetter}}`
-                      );
-                    }}
-                    onBlur={formik.handleBlur}
-                  >
-                    <option label="Select a column" value="" disabled />
-                    {usedColumns.map((col, index) => (
-                      <option key={index} value={col}>
-                        {col}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
             </div>
             <div className="bottomRow">
               <div className="leftColumn">
@@ -326,7 +322,7 @@ const Formikp = () => {
                 )}
 
                 {/*checkbox*/}
-                {/* <div className="checkboxContainer">
+                <div className="checkboxContainer">
                   <input
                     type="checkbox"
                     id="finalDateCheckbox"
@@ -336,7 +332,8 @@ const Formikp = () => {
                   <label htmlFor="finalDateCheckbox" className="checkBoxLabel">
                     Son Gönderim Tarihi Belirle
                   </label>
-                </div> */}
+                </div>
+
               </div>
               <div className="rightColumn">
                 {/* Alıcı */}
@@ -440,19 +437,12 @@ const Formikp = () => {
 
       {isPreviewOpen && (
         <div className="preview-container">
-          <div className="nib-ios-template">
-          <div className="nib-ios-header"></div>
-          <div className="nib-ios-messages">
-            <div className="nib-ios-time">
-              Messages<br></br>
-            </div>
-            <div className="nib-ios-msg nib-recieved">Mesaj Önizlemesi</div>
-            <div className="nib-ios-msg nib-sent">
-              {formik.values.messageInput ? formik.values.messageInput : "Boş Mesaj"}
-            </div>
-          </div>
-        </div>
-          
+          <div className="preview-content">
+            <label className="preview-title">Mesaj Önizlemesi</label>
+            <p className="preview-message">
+              {formik.values.messageInput ? formik.values.messageInput  : "Boş Mesaj"}
+            </p>
+
             
 
             <div className="preview-button">
@@ -464,8 +454,12 @@ const Formikp = () => {
               />
             </div>
           </div>
-        
-      )}
+        </div>
+      )} 
+      
+  
+
+
     </form>
   );
 };
