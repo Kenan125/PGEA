@@ -19,7 +19,6 @@ const Settings = () => {
 
   return (
     <div>
-
       <div className="container">
         <label className="title">Ayarlar</label>
         <div className="charSet">
@@ -32,12 +31,11 @@ const Settings = () => {
               </option>
             ))}
           </select>
-        </div>
-
+        /? */</div>
 
         <div className="buttonRow">
           <Button id={"geri"} label={"Geri"} onClick={() => navigate(-1)} type="SECONDARY" />
-          <Button id={"tamam"}  label={"Tamam"} onClick={() => navigate("/")} type="MAIN" />
+          <Button id={"tamam"} label={"Tamam"} onClick={() => navigate("/")} type="MAIN" />
         </div>
       </div>
     </div>
