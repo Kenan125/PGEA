@@ -1,11 +1,13 @@
 import { useCallback } from "react";
 import { format } from "date-fns";
-import { replacePlaceholders } from "../helpers/replacePlaceholders";
+import { replacePlaceholders } from "../utils/replacePlaceholders";
+import { FormikHelpers } from "formik";
+import { initialValues } from "../interfaces/initialValues";
 
 
 
-export function onSubmit(send: (payload: any) => Promise<void>) {
-  const handleSubmit = async (values: any, { setSubmitting }: any) => {
+export function onSubmit() {
+  const handleSubmit = async (values: initialValues, { setSubmitting,resetForm }: FormikHelpers<initialValues>, ) => {
     const sendDate =
       values.sendMethod === "Hemen Gönder"
         ? format(new Date(), "yyyy-MM-dd'T'HH:mm")
@@ -13,7 +15,7 @@ export function onSubmit(send: (payload: any) => Promise<void>) {
 
     const payloadRecipients = values.recipients.map((recipient: any) => ({
       phoneNumber: recipient.phoneNumber,
-      sendDate: values.sendMethod === "ColumnDate" ? recipient.sendDate : sendDate,
+      sendDate: values.sendMethod === "Sütundaki Tarihe Gönder" ? recipient.sendDate : sendDate,
       messageInput: replacePlaceholders(values.messageInput, recipient),
     }));
 
@@ -32,13 +34,20 @@ export function onSubmit(send: (payload: any) => Promise<void>) {
 
     try {
       console.log("payload:", JSON.stringify(payload, null, 2));
-      await send(payload);
-      alert("Data sent successfully");
+      //await send(payload);
+      resetForm();
+      
+      
+      
+      
     } catch (error) {
       console.error("Error sending data:", error);
       alert("Error sending data. Check console.");
+      
     } finally {
       setSubmitting(false);
+      
+
     }
   };
 

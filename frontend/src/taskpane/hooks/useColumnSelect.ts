@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from "react";
 
 import { readColumn } from "../ReadColumn";
-import { listUsedcolumns } from "../helpers/listusedcolumns";
+import { listUsedcolumns } from "../utils/listusedcolumns";
 
 export function useColumnSelect(formik: any, usedColumns: string[], colNum: number[]) {
   

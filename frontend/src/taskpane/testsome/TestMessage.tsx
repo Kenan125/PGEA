@@ -7,8 +7,8 @@ import { MessageBar } from "@fluentui/react-components";
 import { useNavigate } from "react-router-dom";
 import "../style/style.css";
 import { testMessage } from "./testMessages";
-import { gettext } from "../helpers/gettext";
-import { listUsedcolumns } from "../helpers/listusedcolumns";
+import { gettext } from "../utils/gettext";
+import { listUsedcolumns } from "../utils/listusedcolumns";
 
 interface Recipient {
   phoneNumber: string;

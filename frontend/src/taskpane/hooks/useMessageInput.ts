@@ -1,6 +1,6 @@
 
-import { gettext } from "../helpers/gettext";
-import { listUsedcolumns } from "../helpers/listusedcolumns";
+import { gettext } from "../utils/gettext";
+import { listUsedcolumns } from "../utils/listusedcolumns";
 
 export function useMessageInput(formik: any, usedColumns: string[], colNum: number[]) {
   

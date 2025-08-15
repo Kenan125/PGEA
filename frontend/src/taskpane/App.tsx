@@ -1,31 +1,31 @@
 import * as React from "react";
 
-import TextInsertion from "./TextInsertion";
+import TextInsertion from "./components/TextInsertion";
 import { makeStyles } from "@fluentui/react-components";
-import { insertText } from "../taskpane";
+import { insertText } from "./taskpane";
 import { Link, MemoryRouter, Route, Routes } from "react-router-dom";
-import InsertTextToSelection from "./InsertTextToSelection";
-import { insertSelectedArea } from "../insertselectedarea";
-import { readSelectedArea } from "../readselectedarea";
-import ReadSelectedArea from "./ReadSelectedArea";
+import InsertTextToSelection from "./components/InsertTextToSelection";
+import { insertSelectedArea } from "./insertselectedarea";
+import { readSelectedArea } from "./readselectedarea";
+import ReadSelectedArea from "./components/ReadSelectedArea";
 
-import SendNow from "./SendNow";
-import Test from "./Test";
-import { highlightTest } from "../test";
-import BatchSend from "./BatchSend";
-import SendScheduled from "./SendScheduled";
-import { setDate } from "../setdate";
-import SetDate from "./SetDate";
-import { getDate } from "../getdate";
-import GetDate from "./GetDate";
+import SendNow from "./components/SendNow";
+import Test from "./components/Test";
+import { highlightTest } from "./test";
+import BatchSend from "./components/BatchSend";
+import SendScheduled from "./components/SendScheduled";
+import { setDate } from "./setdate";
+import SetDate from "./components/SetDate";
+import { getDate } from "./getdate";
+import GetDate from "./components/GetDate";
 
-import Send from "./Send";
-import ReadColumn from "./ReadColumn";
+import Send from "./components/Send";
+import ReadColumn from "./components/ReadColumn";
 
-import Header from "../pages/Header";
-import Formikp from "../pages/Formikp";
-import  Settings  from "../pages/Settings"
-import TestMessage from "../testsome/TestMessage";
+import Header from "./pages/Header";
+import Formikp from "./pages/Formikp";
+import  Settings  from "./pages/Settings"
+import TestMessage from "./testsome/TestMessage";
 
 
 

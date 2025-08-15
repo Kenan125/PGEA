@@ -5,9 +5,7 @@ import { send } from "../send";
 import { initialValues } from "../interfaces/initialValues";
 
 export const useSendForm = () =>{
-    const{handleSubmit} = onSubmit(async(payload)=>{
-    send(payload)
-  })
+    const{handleSubmit} = onSubmit()
 
 const formik = useFormik<initialValues>({
     initialValues: {
@@ -28,7 +26,11 @@ const formik = useFormik<initialValues>({
       time: "",
     },
     validationSchema: sendSchema,
+
+
     onSubmit: handleSubmit,
+    
+    
   });
   return {formik};
 }

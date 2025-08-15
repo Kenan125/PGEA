@@ -9,7 +9,7 @@ import ColumnDate from "./ColumnDate";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import "../style/style.css";
-import { listUsedcolumns } from "../helpers/listusedcolumns";
+import { listUsedcolumns } from "../utils/listusedcolumns";
 import { initialValues } from "../interfaces/initialValues";
 import { onSubmit } from "../hooks/onSubmit";
 import { send } from "../send";
@@ -75,9 +75,9 @@ const Formikp = () => {
             <div className="topRow">
               <div className="leftColumn">
                 <label htmlFor="messageInput">Mesajınız</label>
-                <input
+                <textarea
                   id="messageInput"
-                  type="text"
+                  
                   placeholder="Mesajınızı giriniz"
                   value={formik.values.messageInput}
                   onChange={formik.handleChange}
@@ -295,10 +295,15 @@ const Formikp = () => {
         <div className="buttonRow">
           <Button id={"iptal"} label={"İptal"} onClick={handleCancel} type="SECONDARY" />
           {/* <Button id={"tamam"}   label={"Tamam"} onClick={formik.handleSubmit} type={"MAIN"} /> */}
+          
+          
 
-          <button disabled={formik.isSubmitting} type="submit" className="mainButton">
+          <button disabled={formik.isSubmitting}   type="submit" className="mainButton">
             Tamam
           </button>
+          { formik.isSubmitting &&(
+            <div>Success message here: </div>
+          )}
         </div>
       </div>
 
