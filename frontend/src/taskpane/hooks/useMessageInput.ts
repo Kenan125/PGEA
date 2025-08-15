@@ -22,7 +22,7 @@ export function useMessageInput(formik: any, usedColumns: string[], colNum: numb
         const val = values[i] || "";
         recipients.push({
           ...existing,
-          [`Column_${columnLetter}`]: val, // store dynamically
+          [`Column_${columnLetter}`]: val, // store dynamically  
         });
       }
   
