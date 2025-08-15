@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { sendSchema } from "../schemas/sendSchema";
 
 import { format } from "date-fns";
@@ -38,6 +38,8 @@ const Formikp = () => {
   const { formik } = useSendForm();
   const { handleColumnSelect } = useColumnSelect(formik, usedColumns, colNum);
   const { handleMessageInput } = useMessageInput(formik, usedColumns, colNum);
+  const messageSelectRef = useRef<HTMLSelectElement>(null);
+  const [showCustomizeSelect, setShowCustomizeSelect] = useState(false);
 
   useEffect(() => {
     handleListUsedColumns();
@@ -107,42 +109,55 @@ const Formikp = () => {
                     setIsPreviewOpen(true);
                   }}
                 />
+                <Button
+                  id={"customize"}
+                  label={"Kişiselleştir"}
+                  onClick={() => {
+                    setShowCustomizeSelect(true);
+                    setTimeout(() => {
+                      if (messageSelectRef.current) {
+                        messageSelectRef.current.focus();
+                        messageSelectRef.current.click();
+                      }
+                    }, 0);
+                  }}
+                  type={"TERTIARY"}
+                />
+                
+                {showCustomizeSelect && (
+                <div className="customize">
+                  <label htmlFor="messageColumn" className="label">Kişiselletirmek İçin Sütun Seçin</label>
+                  <select
+                    ref={messageSelectRef}
+                    id="messageColumn"
+                    name="selectedMessageInput"
+                    value={formik.values.selectedMessageInput}
+                    onChange={async (e) => {
+                      const colLetter = e.target.value;
+                      formik.setFieldValue("selectedMessageInput", colLetter);
+                      await handleMessageInput(`Column_${colLetter}`, colLetter);
+                      formik.setFieldValue(
+                        "messageInput",
+                        formik.values.messageInput + `{Column_${colLetter}}`
+                      );
+                    }}
+                    onBlur={formik.handleBlur}
+                  >
+                    <option label="Select a column" value="" disabled />
+                    {usedColumns.map((col, index) => (
+                      <option key={index} value={col}>
+                        {col}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
                
 
                 
 
-                <label id="label" htmlFor="messageColumn">
-                  Select custom message column
-                </label>
-                <select
-                  id="messageColumn"
-                  name="selectedMessageInput"
-                  value={formik.values.selectedMessageInput}
-                  onChange={async (e) => {
-                    const colLetter = e.target.value;
-
-                    // Store the column letter in formik
-                    formik.setFieldValue("selectedMessageInput", colLetter);
-
-                    // Fetch the column values and store under Column_X in recipients
-                    await handleMessageInput(`Column_${colLetter}`, colLetter);
-
-                    // Append a placeholder into the message template
-                    formik.setFieldValue(
-                      "messageInput",
-                      formik.values.messageInput + `{Column_${colLetter}}`
-                    );
-                  }}
-                  onBlur={formik.handleBlur}
-                >
-                  <option label="Select a column" value="" disabled />
-                  {usedColumns.map((col, index) => (
-                    <option key={index} value={col}>
-                      {col}
-                    </option>
-                  ))}
-                </select>
+                
 
               </div>
             </div>
@@ -289,12 +304,19 @@ const Formikp = () => {
 
       {isPreviewOpen && (
         <div className="preview-container">
-          <div className="preview-content">
-            <label className="preview-title">Mesaj Önizlemesi</label>
-            <p className="preview-message">
-              {formik.values.messageInput ? formik.values.messageInput  : "Boş Mesaj"}
-            </p>
-
+          <div className="nib-ios-template">
+          <div className="nib-ios-header"></div>
+          <div className="nib-ios-messages">
+            <div className="nib-ios-time">
+              Messages<br></br>
+            </div>
+            <div className="nib-ios-msg nib-recieved">Mesaj Önizlemesi</div>
+            <div className="nib-ios-msg nib-sent">
+              {formik.values.messageInput ? formik.values.messageInput : "Boş Mesaj"}
+            </div>
+          </div>
+        </div>
+          
             
 
             <div className="preview-button">
@@ -306,7 +328,7 @@ const Formikp = () => {
               />
             </div>
           </div>
-        </div>
+        
       )} 
       
   
