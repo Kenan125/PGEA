@@ -31,7 +31,8 @@ const Settings = () => {
               </option>
             ))}
           </select>
-        /? */</div>
+        </div>
+
 
         <div className="buttonRow">
           <Button id={"geri"} label={"Geri"} onClick={() => navigate(-1)} type="SECONDARY" />

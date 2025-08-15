@@ -123,10 +123,10 @@ const Formikp = () => {
                   }}
                   type={"TERTIARY"}
                 />
-                
+                </div>
                 {showCustomizeSelect && (
                 <div className="customize">
-                  <label htmlFor="messageColumn" className="label">Kişiselletirmek İçin Sütun Seçin</label>
+                  <label htmlFor="messageColumn" className="label">Kişiselleştirmek İçin Sütun Seçin</label>
                   <select
                     ref={messageSelectRef}
                     id="messageColumn"
@@ -160,7 +160,7 @@ const Formikp = () => {
                 
 
               </div>
-            </div>
+            
             <div className="bottomRow">
               <div className="leftColumn">
                 {/* Gönderim Şekli */}
@@ -306,7 +306,7 @@ const Formikp = () => {
           )}
         </div>
       </div>
-
+ 
       {isPreviewOpen && (
         <div className="preview-container">
           <div className="nib-ios-template">
@@ -320,11 +320,9 @@ const Formikp = () => {
               {formik.values.messageInput ? formik.values.messageInput : "Boş Mesaj"}
             </div>
           </div>
-        </div>
           
-            
-
-            <div className="preview-button">
+        </div> 
+        <div className="preview-button">
               <Button
                 id={"kapat"}
                 label={"Kapat"}
@@ -332,13 +330,11 @@ const Formikp = () => {
                 type={"MAIN"}
               />
             </div>
-          </div>
-        
-      )} 
+      </div>
+
+        )}
+
       
-  
-
-
     </form>
   );
 };
