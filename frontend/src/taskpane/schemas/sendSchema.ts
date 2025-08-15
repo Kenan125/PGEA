@@ -49,7 +49,7 @@ export const sendSchema = yup.object().shape({
   }),
   sendDate: yup.date().when("sendMethod", {
 
-    is: (val:string)=> val=== "İleri Tarihte Gönder" || val === "Parçalı Gönder"
+    is: (val:string)=> val=== "İleri Tarihte Gönder" || val === "Parçalı Gönder",
     then: (schema) => schema.required("Tarih ve Saat Seçiniz").min( today, "Send date cannot be less than current date and time"),
 
     otherwise: (schema) => schema,

@@ -2,7 +2,8 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import { Image, makeStyles } from "@fluentui/react-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import Button from "./Button"
+import Button from "../components/Button";
+
 
 const useStyles = makeStyles({
   welcome__header: {

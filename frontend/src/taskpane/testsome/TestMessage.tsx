@@ -1,15 +1,14 @@
 import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik } from "formik";
 import React, { useEffect, useState } from "react";
-import { sendSchema } from "../schemas/sendSchema";
 
-import { listUsedcolumns } from "../listusedcolumns";
 import { format } from "date-fns";
 import Button from "../components/Button";
 import { MessageBar } from "@fluentui/react-components";
 import { useNavigate } from "react-router-dom";
-import "../style.css";
+import "../style/style.css";
 import { testMessage } from "./testMessages";
-import { gettext } from "../gettext";
+import { gettext } from "../helpers/gettext";
+import { listUsedcolumns } from "../helpers/listusedcolumns";
 
 interface Recipient {
   phoneNumber: string;
