@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { readSelectedArea } from "../readselectedarea";
+import { readSelectedArea } from "../utils/readselectedarea";
 
-import "../style/style.css";
+import "../../style/style.css";
 
 const BatchSend = () => {
   const [recipients, setRecipients] = useState<Array<{ phoneNumber: string; sendDate: string }>>(

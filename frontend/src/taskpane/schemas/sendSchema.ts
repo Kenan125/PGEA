@@ -10,7 +10,7 @@ export const sendSchema = yup.object().shape({
   isLastSendDate: yup.boolean(),
   lastSendDate: yup.date().when("isLastSendDate", {
     is: true,
-    then: (schema) => schema.required("Son gönderim tarihini seçiniz").min(yup.ref('sendDate'), 'Son gönderim tarihi başlangıç tarihinden erken olamaz'),
+    then: (schema) => schema.required("Son gönderim tarihini seçiniz").min(today, 'Son gönderim tarihi başlangıç tarihinden erken olamaz'),
     otherwise: (schema) => schema,
   }),
 

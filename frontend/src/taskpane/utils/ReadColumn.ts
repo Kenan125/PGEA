@@ -1,24 +1,22 @@
 import { format, formatISO, parse } from "date-fns";
 import { parsePhoneNumberWithError } from "libphonenumber-js";
+import { handleChange } from "./handleChange";
 /* global Excel  */
 export async function readColumn(chsRow: number, str: string, time?: string): Promise<any[]> {
   try {
     return await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      
       const selectedRange = context.workbook.worksheets.getActiveWorksheet().getUsedRange();
       selectedRange.load(["text"]);
       await context.sync();
       const values = selectedRange.text || [];
       let text = [];
       let extracted = [];
-      console.log(time + "time");
-
-      console.log(time);
-
       if (values !== null) {
         text = values.map((row) => row[chsRow] ?? "");
         console.log(text + "texttttst");
-        if (str === "phoneNumber") {
-          console.log("time is null");
+        if (str === "phoneNumber") {         
           for (let i = 0; i < text.length; i++) {
             if (!isNaN(text[i])) {
               if (parsePhoneNumberWithError(text[i], "TR").isPossible()) {
@@ -30,10 +28,7 @@ export async function readColumn(chsRow: number, str: string, time?: string): Pr
           }
           console.log("PhoneNumbaaaaa: " + extracted);
         }
-        if (str === "sendDate") {
-          console.log("time is not null ");
-          console.log(text[0]);
-
+        if (str === "sendDate") {                    
           for (let i = 0; i < text.length; i++) {
             const parsed = parse(String(text[i]), "dd/MM/yyyy", new Date());
             extracted.push(format(new Date(parsed), `yyyy-MM-dd'T'${time}`));
@@ -41,6 +36,8 @@ export async function readColumn(chsRow: number, str: string, time?: string): Pr
           console.log("dateLLL::: " + extracted);
         }
       }
+      
+      
 
       return extracted;
     });

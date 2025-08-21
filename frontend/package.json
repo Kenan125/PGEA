@@ -28,6 +28,7 @@
   "dependencies": {
     "@fluentui/react-components": "^9.68.3",
     "@fluentui/react-icons": "^2.0.264",
+    "@fluentui/react-timepicker-compat": "^0.4.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "core-js": "^3.36.0",

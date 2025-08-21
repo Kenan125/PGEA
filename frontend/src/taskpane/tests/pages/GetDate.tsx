@@ -9,7 +9,7 @@ import {
   Dropdown,
   Option,
 } from "@fluentui/react-components";
-import { listUsedcolumns } from "../utils/listusedcolumns";
+import { listUsedcolumns } from "../../utils/listusedcolumns";
 
 
 interface GetDateProps {

@@ -3,11 +3,11 @@ type payloadProps = {
   sendMethod: string;
   isLastSendDate?: boolean;
   lastSendDate?: string;
-  messageContent: {
-    messageInput: string;
+  messageContent: { 
     recipients: Array<{
       phoneNumber: string;
       sendDate: string;
+      messageInput: string;
     }>;
   };
   batchSetting?: {
@@ -28,6 +28,7 @@ export async function send(payload: payloadProps): Promise<void> {
     console.log("Message send created successfully!", response.data);
   } catch (error) {
     console.error("Error creating post:", error);
+    console.error("Status: "+ error.status)
     if (error.response?.data?.errors) {
       console.error("Validation errors:", error.response.data.errors);
     }

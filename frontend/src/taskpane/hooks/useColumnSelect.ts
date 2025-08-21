@@ -1,20 +1,20 @@
 import { useEffect, useCallback } from "react";
 
-import { readColumn } from "../ReadColumn";
+import { readColumn } from "../utils/ReadColumn";
 import { listUsedcolumns } from "../utils/listusedcolumns";
 
 export function useColumnSelect(formik: any, usedColumns: string[], colNum: number[]) {
   
-  // Core logic as a reusable callback
-  const handleColumnSelect = useCallback(
-    async (formikField: string, columnLetter: string, targetField: "phoneNumber" | "sendDate", time?: string) => {
+  
+  async function handleColumnSelect(formikField: string, columnLetter: string, targetField: "phoneNumber" | "sendDate", time?: string){
+
+      
       formik.setFieldValue(formikField, columnLetter);
-
       const index = usedColumns.findIndex((col) => col === columnLetter);
-      if (index < 0) return; // Safety check
+      if (index < 0) return;
       const absoluteColNum = colNum[index];
-
       try {
+               
         const list = await listUsedcolumns();
         const values = await readColumn(absoluteColNum - list.startCol, targetField, time);
 
@@ -34,13 +34,13 @@ export function useColumnSelect(formik: any, usedColumns: string[], colNum: numb
         }
 
         formik.setFieldValue("recipients", recipients);
+        
       } catch (err) {
         console.error("Failed to read column:", err);
         formik.setFieldError("recipients", "Failed to read selected column");
       }
-    },
-    [formik, usedColumns, colNum]
-  );
+    }
+
 
   
 

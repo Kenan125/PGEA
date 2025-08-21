@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { readSelectedArea } from "../readselectedarea";
-import { send } from "../send";
+import { readSelectedArea } from "../utils/readselectedarea";
+import { useNavigate } from "react-router-dom";
+import { send } from "../../utils/send";
+import { endOfDay, format } from "date-fns";
 
-const SendScheduled = () => {
-  const [recipients, setRecipients] = useState<Array<{ phoneNumber: string; sendDate: string }>>(
-    []
-  );
+
+const SendNow = () => {
+  
+  const [recipients, setRecipients] = useState<Array<{ phoneNumber: string}>>([]);
+  
   
   const [messageInput, setMessageInput] = useState<string>("");
-  const [sendDate, setSendDate] = useState<string>("");
   
- 
+  
+  const navigate = useNavigate();
 
   const handleGetNumber = async () => {
     try {
@@ -24,17 +27,34 @@ const SendScheduled = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // const sendDate = new Date()
+    const today = new Date(
+      Date.UTC(
+        Number(new Date().getFullYear()),
+        Number(new Date().getMonth()),
+        Number(new Date().getDate()),
+        Number(new Date().getHours()),
+        Number(new Date().getMinutes())
+      )
+    )
+    
+     //const today:string = format((new Date()), "yyyy-MM-dd'T'HH:mm:ss'Z'");
+     console.log("hellof"+today);
     const payload = {
-      sendMethod:1,
+      sendMethod:0,
       messageContent: {
         messageInput,
         recipients: recipients.map((r) => ({
           phoneNumber: r.phoneNumber,
-          sendDate: sendDate,
+          sendDate:     new Date(today).toISOString(),
         })),
-      }
+      },
+      
     };
+
     try {
+      
+      //setSendDate(sendDate);
       
       //await send(payload);
       console.log("Data sent successfully.");
@@ -42,6 +62,7 @@ const SendScheduled = () => {
       console.error("Error sending data:", error);
     }
   };
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -57,22 +78,7 @@ const SendScheduled = () => {
           required
         />
       </div>
-      <div>
-        <label htmlFor="sendDate" className="form-label">
-          Start Date
-        </label>
-        <input
-          id="sendDate"
-          className="form-control"
-          type="datetime-local"
-          value={sendDate}
-          onChange={(e) => {
-            setSendDate(e.target.value);
-            console.log(e.target.value);
-          }}
-          required
-        />
-      </div>
+
       <div>
         <button type="button" onClick={handleGetNumber}>
           Load Phone Numbers from Excel
@@ -81,18 +87,23 @@ const SendScheduled = () => {
 
       <div>
         <strong>Loaded numbers:</strong>
-
-        <strong>Loaded numbers:</strong>
         <ul>
           {recipients.map((p, i) => (
             <li key={i}>{p.phoneNumber}</li>
           ))}
         </ul>
       </div>
+
       <div>
         <button type="submit">Send Message</button>
+      </div>
+      <div>
+        <button title="Geri" type="button" onClick={() => navigate("/")}>
+          Geri
+        </button>
       </div>
     </form>
   );
 };
-export default SendScheduled;
+
+export default SendNow;

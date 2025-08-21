@@ -4,7 +4,7 @@ import { listUsedcolumns } from "../utils/listusedcolumns";
 
 export function useMessageInput(formik: any, usedColumns: string[], colNum: number[]) {
   
-  // Core logic as a reusable callback
+  
   const handleMessageInput =  async (formikField: string, columnLetter: string) => {
       formik.setFieldValue(formikField, columnLetter);
   
@@ -22,7 +22,7 @@ export function useMessageInput(formik: any, usedColumns: string[], colNum: numb
         const val = values[i] || "";
         recipients.push({
           ...existing,
-          [`Column_${columnLetter}`]: val, // store dynamically  
+          [`Sutun_${columnLetter}`]: val, 
         });
       }
   

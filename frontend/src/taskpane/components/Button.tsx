@@ -40,7 +40,7 @@ const Button = ({id,label,onClick,type}) => {
     }
 
   return (
-    <button id={id} className={record[type]} onClick={onClick} >{label}</button>
+    <button id={id} type='button' className={record[type]} onClick={onClick} >{label}</button>
   )
 }
 

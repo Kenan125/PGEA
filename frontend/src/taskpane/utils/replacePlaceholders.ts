@@ -1,6 +1,6 @@
 export function replacePlaceholders(template: string, recipient: Record<string, any>): string {
   return Object.keys(recipient).reduce((msg, key) => {
-    if (key.startsWith("Column_")) {
+    if (key.startsWith("Sutun_")) {
       const regex = new RegExp(`\\{${key}\\}`, "g");
       return msg.replace(regex, recipient[key] || "");
     }

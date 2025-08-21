@@ -5,7 +5,14 @@
   "hints": {
     "typescript-config/strict": "off",
     "no-inline-styles": "off",
-    "meta-viewport": "off"
+    "meta-viewport": "off",
+    "axe/text-alternatives": [
+      "default",
+      {
+        "document-title": "off"
+      }
+    ],
+    "axe/language": "off"
   },
   "browserslist": [
     "defaults",

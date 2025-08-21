@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { readSelectedArea } from "../readselectedarea";
+import { readSelectedArea } from "../utils/readselectedarea";
 
 import { format } from "date-fns";
-import { listNumUsedColumns } from "../utils/listnumusedColumns";
-import { readColumn } from "../ReadColumn";
-import { listUsedcolumns } from "../utils/listusedcolumns";
+import { listNumUsedColumns } from "../../utils/listnumusedColumns";
+import { readColumn } from "../../utils/ReadColumn";
+import { listUsedcolumns } from "../../utils/listusedcolumns";
 
 
 

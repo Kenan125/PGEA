@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { readSelectedArea } from "../readselectedarea";
-import { send } from "../send";
+import { readSelectedArea } from "../utils/readselectedarea";
+import { send } from "../../utils/send";
 
 import { format } from "date-fns";
 
-import { readColumn } from "../ReadColumn";
+import { readColumn } from "../../utils/ReadColumn";
 import { Dropdown, DropdownProps, Field, Option, useId } from "@fluentui/react-components";
 import { ErrorCircle12Filled, ErrorCircle12Regular } from "@fluentui/react-icons";
-import { listUsedcolumns } from "../utils/listusedcolumns";
+import { listUsedcolumns } from "../../utils/listusedcolumns";
 
 
 
@@ -223,7 +223,7 @@ const Send = (props: Partial<DropdownProps>) => {
     };
     try {
       console.log(JSON.stringify(payload, null, 1));
-      await send(payload);
+      //await send(payload);
       console.log("Data sent successfully.");
     } catch (error) {
       console.log(payload);

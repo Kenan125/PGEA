@@ -2,7 +2,7 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import { Image, makeStyles } from "@fluentui/react-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import Button from "../components/Button";
+import Button from "../Button";
 
 
 const useStyles = makeStyles({

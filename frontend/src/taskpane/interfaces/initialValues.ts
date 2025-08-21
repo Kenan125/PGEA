@@ -1,7 +1,6 @@
 import { Recipient } from "./Recipient";
-
 export interface initialValues {
-
+  Encoding: string;
   sendMethod:
     | ""
     | "Hemen Gönder"

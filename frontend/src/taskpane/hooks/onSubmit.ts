@@ -1,13 +1,14 @@
-import { useCallback } from "react";
 import { format } from "date-fns";
 import { replacePlaceholders } from "../utils/replacePlaceholders";
 import { FormikHelpers } from "formik";
 import { initialValues } from "../interfaces/initialValues";
 
-
-
 export function onSubmit() {
-  const handleSubmit = async (values: initialValues, { setSubmitting,resetForm }: FormikHelpers<initialValues>, ) => {
+  
+  const handleSubmit = async (
+    values: initialValues,
+    { setSubmitting, resetForm, setStatus }: FormikHelpers<initialValues>
+  ) => {
     const sendDate =
       values.sendMethod === "Hemen Gönder"
         ? format(new Date(), "yyyy-MM-dd'T'HH:mm")
@@ -20,6 +21,7 @@ export function onSubmit() {
     }));
 
     const payload = {
+      Encoding: values.Encoding,
       sendMethod: values.sendMethod,
       isLastSendDate: values.isLastSendDate,
       lastSendDate: values.lastSendDate,
@@ -31,23 +33,28 @@ export function onSubmit() {
         timeWindowEnd: values.timeWindowEnd,
       },
     };
+    
 
     try {
+      
       console.log("payload:", JSON.stringify(payload, null, 2));
+
+      
       //await send(payload);
-      resetForm();
-      
-      
+      setStatus("success");
       
       
     } catch (error) {
       console.error("Error sending data:", error);
-      alert("Error sending data. Check console.");
+
       
     } finally {
       setSubmitting(false);
-      
+      setTimeout(() => {
+      resetForm();
 
+      }, 500); 
+      
     }
   };
 

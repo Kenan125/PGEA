@@ -1,16 +1,11 @@
-/* global Excel */
-
 import { convertToColumnLetter } from "./convertToColumnLetter";
 import { listNumUsedColumns } from "./listnumusedColumns";
 
-
-
 export async function listUsedcolumns(): Promise<{columnLetters:string[],columnNum:number[],startCol:number}> {
-  try {
-    return await Excel.run(async (context) => {
-      const columnInfo = await listNumUsedColumns()       
-        
-      await context.sync();     
+  try {    
+    
+      const columnInfo = await listNumUsedColumns()               
+       
       const columnLetters: string[] = [];
       const columnNum =columnInfo.columnnum;
       const startCol = columnInfo.startCol;
@@ -30,7 +25,6 @@ export async function listUsedcolumns(): Promise<{columnLetters:string[],columnN
         startCol
 
       };
-    });
   } catch (error) {
     console.log("Error: " + error);
     return error;
