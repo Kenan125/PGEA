@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import * as yup from "yup";
 const today = format((new Date()), "yyyy-MM-dd'T'HH:mm");
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 export const sendSchema = yup.object().shape({
   
   sendMethod: yup
@@ -20,7 +21,7 @@ export const sendSchema = yup.object().shape({
     .array()
     .of(
       yup.object().shape({
-        phoneNumber: yup.string().required("Phone number required"),
+        phoneNumber: yup.string(),
         sendDate: yup.date().when("sendMethod", {
           is:(val: string)=> val === "ColumnDate",
           then: (schema) => schema.required("Must select send date column").min(today,"Gönderim tarihi bugünden erken olamaz")

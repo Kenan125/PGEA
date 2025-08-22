@@ -2,16 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import Batch from "../components/Home/Batch";
 import Scheduled from "../components/Home/Scheduled";
 import ColumnDate from "../components/Home/ColumnDate";
-import LastSendDate from "../components/lastSendDate";
-import { Navigate, useNavigate } from "react-router-dom";
 import { useColumnSelect } from "../hooks/useColumnSelect";
 import { useMessageInput } from "../hooks/useMessageInput";
-import { replacePlaceholders } from "../utils/replacePlaceholders";
 import { registerEventHandler } from "../utils/registerEventHandler";
 import {
   Button,
   Dropdown,
-  mergeClasses,
   Option,
   Select,
   Switch,
@@ -22,10 +18,18 @@ import {
   useId,
   useToastController,
 } from "@fluentui/react-components";
-import { useStyles } from "../style/useStyle";
-import { Warning16Regular } from "@fluentui/react-icons";
+import Preview from "../components/preview";
+import SendDate from "../components/sendDate";
+import { useNavigate } from "react-router-dom";
+import MessageInput from "../components/messageInput";
+import { Send } from "lucide-react";
+import SendMethod from "../components/sendMethod";
+import PhoneNumber from "../components/phoneNumber";
+import Customize from "../components/customize";
+import IsLastSendDate from "../components/isLastSendDate";
+import ConfirmForm from "../components/confirmForm";
 
-const Home = ({ formik ,classes }) => {
+const Home = ({ formik, classes }) => {
   //const classes = useStyles();
   const toasterId = useId("toaster");
   const { dispatchToast } = useToastController(toasterId);
@@ -61,28 +65,15 @@ const Home = ({ formik ,classes }) => {
   }, [formik.status]);
 
   console.log("formik:", formik);
+  console.log("sendDate:", formik.values.sendDate);
 
   return (
     <>
       <form onSubmit={formik.handleSubmit} autoComplete="off">
         <div className={classes.myTestBackground}>
           <div>
-            <div  className={classes.topRow}>
-              <div className={classes.leftColumn}>
-                <label htmlFor="messageInput">Mesajınız</label>
-                <Textarea
-                  id="messageInput"
-                  appearance="outline"
-                  resize="vertical"
-                  placeholder="Mesajınızı giriniz"
-                  value={formik.values.messageInput}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.touched.messageInput && formik.errors.messageInput && (
-                  <div style={{ color: "red" }}>{formik.errors.messageInput}</div>
-                )}
-              </div>
+            <div className={classes.topRow}>
+              <MessageInput formik={formik} classes={classes} />
               <div className={classes.rightColumn}>
                 <div className={classes.topRight}>
                   <div>SMS Sayısı: 1</div>
@@ -105,7 +96,6 @@ const Home = ({ formik ,classes }) => {
                     setIsPreviewOpen(true);
                   }}
                 >
-                  
                   Önizleme
                 </Button>
                 <Button
@@ -120,96 +110,24 @@ const Home = ({ formik ,classes }) => {
                 </Button>
               </div>
               {showCustomizeSelect && (
-                <div className={classes.customize}>
-                  <label htmlFor="messageColumn" className={classes.label}>
-                    Kişiselleştirmek İçin Sütun Seçin
-                  </label>
-                  <Select
-                    ref={messageSelectRef}
-                    id="messageColumn"
-                    name="selectedMessageInput"
-                    value={formik.values.selectedMessageInput}
-                    onChange={async (e) => {
-                      const colLetter = e.target.value;
-                      formik.setFieldValue("selectedMessageInput", colLetter);
-                      await handleMessageInput(`Sutun_${colLetter}`, colLetter);
-                      formik.setFieldValue(
-                        "messageInput",
-                        formik.values.messageInput + `{Sutun_${colLetter}}`
-                      );
-                    }}
-                    onBlur={formik.handleBlur}
-                  >
-                    <option label="Sütun seçin" value="" disabled />
-                    {usedColumns.map((col, index) => (
-                      <option key={index} value={col}>
-                        {col}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
+                <Customize
+                  formik={formik}
+                  classes={classes}
+                  messageSelectRef={messageSelectRef}
+                  handleMessageInput={handleMessageInput}
+                  usedColumns={usedColumns}
+                />
               )}
             </div>
 
-            <div className={classes.bottomRow}  >
-              <div className={classes.leftColumn}  >
-                {/* Gönderim Şekli */}
-                <label id="label" htmlFor="sendMethod"></label>
-                <Dropdown  
-                  id="sendMethod"
-                  value={formik.values.sendMethod}
-                  onOptionSelect={(_, data) => formik.setFieldValue("sendMethod", data.optionValue)}
-                  onBlur={formik.handleBlur}
-                  placeholder="Gönderim Şekli"
-                                   
-                >
-                  {options.map((option) => (
-                    <Option key={option} value={option}>
-                      {option}
-                    </Option>
-                  ))}
-                </Dropdown>                
-                {formik.touched.sendMethod && formik.errors.sendMethod && (
-                  <div className={classes.error}>{formik.errors.sendMethod}</div>
-                )}
-              </div>
-              <div className={classes.rightColumn}>
-                {/* Alıcı */}
-                <label id="label" htmlFor="phoneNumberColumn">
-                  Alıcı
-                </label>
-                <div className={classes.phoneNumberColumn}>
-                  <Dropdown
-                
-                  id="phoneNumberColumn"
-                  name="selectedPhoneNumberColumn"
-                  value={formik.values.selectedPhoneNumberColumn}
-                  onOptionSelect={(_event, data) => {
-                    handleColumnSelect(
-                      "selectedPhoneNumberColumn",
-                      data.optionValue,
-                      "phoneNumber"
-                    );
-                  }}
-                  onBlur={formik.handleBlur}
-                  placeholder="Alıcı Sütunu"
-                >
-                  {usedColumns.map((col, index) => (
-                    <Option key={index} value={col}>
-                      {col}
-                    </Option>
-                  ))}
-                </Dropdown>
-
-                </div>
-                
-
-                {formik.touched.selectedPhoneNumberColumn &&
-                  formik.errors.selectedPhoneNumberColumn && (
-                    <div className={classes.error}>{formik.errors.selectedPhoneNumberColumn}</div>
-                  )}
-                  
-              </div>
+            <div className={classes.bottomRow}>
+              <SendMethod formik={formik} classes={classes} options={options} />
+              <PhoneNumber
+                formik={formik}
+                classes={classes}
+                handleColumnSelect={handleColumnSelect}
+                usedColumns={usedColumns}
+              />
             </div>
           </div>
 
@@ -236,23 +154,16 @@ const Home = ({ formik ,classes }) => {
             </>
           )}
           <div>
-            <div className={classes.checkbox}>
-              <Switch
-                type="checkbox"
-                id="isLastSendDate"
-                label={"Son Gönderim Tarihi Belirle"}
-                className={classes.formControl}
-                checked={formik.values.isLastSendDate}
-                onChange={(e) => {
-                  formik.setFieldValue("isLastSendDate", e.target.checked);
-                  if (!e.target.checked) {
-                    formik.setFieldValue("lastSendDate", "");
-                  }
-                }}
+            <IsLastSendDate formik={formik} classes={classes} />
+            {formik.values.isLastSendDate && (
+              <SendDate
+                formik={formik}
+                classes={classes}
+                htmlFor={"lastSendDate"}
+                value={formik.values.lastSendDate}
+                label={"Son Gönderme tarihi"}
               />
-              
-            </div>
-            <LastSendDate formik={formik} classes={classes} />
+            )}
           </div>
 
           <div className={classes.buttonRow}>
@@ -268,44 +179,18 @@ const Home = ({ formik ,classes }) => {
             >
               Tamam
             </Button>
+            <ConfirmForm formik={formik}/>
             <Toaster toasterId={toasterId} />
-            
           </div>
         </div>
 
         {isPreviewOpen && (
-          <div className={classes.previewContainer}>
-            <div className={classes.nibIosTemplate}>
-              
-              <div className={classes.nibIosMessages}>
-                <div className={classes.nibIosTime}>
-                  Mesajlar<br></br>
-                </div>
-                <div className={mergeClasses(classes.nibIosMsg, classes.nibReceived)}>Mesaj Önizlemesi</div>
-                <div className={mergeClasses(classes.nibIosMsg, classes.nibSent)}>
-                  {formik.values.messageInput
-                    ? replacePlaceholders(formik.values.messageInput, formik.values.recipients[0])
-                    : "Boş Mesaj"}
-                </div>
-              </div>
-            </div>
-            <div className={classes.previewButton}>
-              <Button
-                id={"kapat"}
-                //label={"Kapat"}
-                onClick={() => setIsPreviewOpen(false)}
-                type="button"
-              >
-                Kapat
-              </Button>
-            </div>
-          </div>
+          <Preview classes={classes} formik={formik} setIsPreviewOpen={setIsPreviewOpen} />
         )}
       </form>
       {/* {formik.status === "success" &&
                 <Navigate to="/Successful" state={formik.status} replace={true} />
             } */}
-            
     </>
   );
 };

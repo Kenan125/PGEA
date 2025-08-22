@@ -11,13 +11,16 @@ const Batch = ({ formik, classes }) => {
         <Label required className={classes.title}>Parçalı Gönderim</Label>
         <div className={classes.infoRow}>Mesajlarınız aşağıdaki değerlere göre parçalanacaktır.</div>
         <div className={classes.dateRow}>
-          <SendDate formik={formik} classes={classes} />          
+          <SendDate formik={formik} classes={classes} htmlFor={"sendDate"} value={formik.values.sendDate} label={"Başlangıç tarihi"} />          
         </div>
         
         <div className={classes.intervalMinutes}>
           <Label required htmlFor="intervalMinutes" className={classes.formLabel}>
             Parçalar Arası Süre
           </Label>
+          {formik.touched.intervalMinutes && formik.errors.intervalMinutes && (
+            <div className={classes.error}>{formik.errors.intervalMinutes}</div>
+          )}
           <Input
             id="intervalMinutes"
             className={classes.formControl}
@@ -29,13 +32,14 @@ const Batch = ({ formik, classes }) => {
           />
           
         </div>
-        {formik.touched.intervalMinutes && formik.errors.intervalMinutes && (
-            <div className={classes.error}>{formik.errors.intervalMinutes}</div>
-          )}
+        
         <div className={classes.batchSize}>
           <Label required htmlFor="batchSize" className={classes.formLabel}>
             Her Bölümdeki Mesaj Sayısı
           </Label>
+          {formik.touched.batchSize && formik.errors.batchSize && (
+            <div className={classes.error}>{formik.errors.batchSize}</div>
+          )}
           <Input
             id="batchSize"
             className={classes.formControl}
@@ -47,9 +51,7 @@ const Batch = ({ formik, classes }) => {
           />
           
         </div>
-        {formik.touched.batchSize && formik.errors.batchSize && (
-            <div className={classes.error}>{formik.errors.batchSize}</div>
-          )}
+        
         <div className={classes.timeRestrictions}>
           <p style={{ marginBottom: "0px" }}>Gönderme İşleminin Zaman Kısıtlamaları</p>
           <p style={{ color: "#8f8f8f", marginTop: "0px", marginBottom: "30px" }}>
@@ -58,7 +60,7 @@ const Batch = ({ formik, classes }) => {
           </p>
         </div>
         <div className={classes.timeRow}>
-          
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <div className={classes.start}>
             <Label required htmlFor="timeWindowStart" className={classes.formLabel}>
               Başlangıç
@@ -75,7 +77,8 @@ const Batch = ({ formik, classes }) => {
             {formik.touched.timeWindowStart && formik.errors.timeWindowStart && (
               <div style={{ color: "red" }}>{formik.errors.timeWindowStart}</div>
             )}
-          
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
           <div className="end">
             <Label required htmlFor="timeWindowEnd" className={classes.formLabel}>
               Bitiş
@@ -92,6 +95,7 @@ const Batch = ({ formik, classes }) => {
             {formik.touched.timeWindowEnd && formik.errors.timeWindowEnd && (
               <div style={{ color: "red" }}>{formik.errors.timeWindowEnd}</div>
             )}
+            </div>
           </div>
         </div>                  
     </>

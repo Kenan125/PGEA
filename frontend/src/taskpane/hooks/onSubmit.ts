@@ -20,20 +20,25 @@ export function onSubmit() {
       messageInput: replacePlaceholders(values.messageInput, recipient),
     }));
 
-    const payload = {
+    let payload = {
       Encoding: values.Encoding,
       sendMethod: values.sendMethod,
       isLastSendDate: values.isLastSendDate,
       lastSendDate: values.lastSendDate,
       messageContent: { recipients: payloadRecipients },
-      batchSetting: {
+      batchSetting: {},
+    };
+    if(values.sendMethod === "Parçalı Gönder"){
+      payload = {
+        ...payload,
+        batchSetting: {
         batchSize: values.batchSize,
         intervalMinutes: values.intervalMinutes,
         timeWindowStart: values.timeWindowStart,
         timeWindowEnd: values.timeWindowEnd,
       },
-    };
-    
+      }
+    }
 
     try {
       

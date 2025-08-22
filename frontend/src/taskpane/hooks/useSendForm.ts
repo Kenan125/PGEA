@@ -9,6 +9,7 @@ export const useSendForm = () =>{
     const{handleSubmit} = onSubmit()
     
     const formik = useFormik<initialValues>({
+      enableReinitialize:true,
       initialValues: {
         Encoding:  "",
         selectedPhoneNumberColumn: "",
@@ -30,6 +31,7 @@ export const useSendForm = () =>{
 
 
     onSubmit: handleSubmit,
+    
     
     
   });

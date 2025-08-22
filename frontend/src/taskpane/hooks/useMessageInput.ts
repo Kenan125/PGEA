@@ -27,6 +27,7 @@ export function useMessageInput(formik: any, usedColumns: string[], colNum: numb
       }
   
       formik.setFieldValue("recipients", recipients);
+      console.log("values:", recipients);
     };
 
   

@@ -1,22 +1,24 @@
 import { Input, Label } from '@fluentui/react-components';
+import { Formik } from 'formik';
 import React from 'react';
-const SendDate = ({formik ,classes}) => {
+import FormikErrors from './formikErrors';
+const SendDate = ({formik ,classes, htmlFor, value, label}) => {
     return(
         <>
-        <Label required htmlFor="sendDate" className={classes.formLabel}>
-           Başlangıç Tarihi
+        <Label required htmlFor={htmlFor} className={classes.formLabel}>
+           {label}
           </Label>
+          <FormikErrors formik={formik} field={htmlFor} classes={classes} />
           <Input
-            id="sendDate"
+            id={htmlFor}
             className={classes.formControl}
             type="datetime-local"
-            value={formik.values.sendDate}
+            value={value}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            
           />
-          {formik.touched.sendDate && formik.errors.sendDate && (
-          <div className={classes.error}>{formik.errors.sendDate}</div>
-        )}
+          
         </>
     );
 

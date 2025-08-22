@@ -15,7 +15,7 @@ export async function readColumn(chsRow: number, str: string, time?: string): Pr
       let extracted = [];
       if (values !== null) {
         text = values.map((row) => row[chsRow] ?? "");
-        console.log(text + "texttttst");
+        
         if (str === "phoneNumber") {         
           for (let i = 0; i < text.length; i++) {
             if (!isNaN(text[i])) {

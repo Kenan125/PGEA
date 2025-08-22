@@ -8,7 +8,7 @@ const Scheduled = ({ formik ,classes }) => {
       
       <div className={classes.scheduledContent}>
         
-          <SendDate formik={formik} classes={classes} />
+          <SendDate formik={formik} classes={classes} htmlFor={"sendDate"} value={formik.values.sendDate} label={"Başlangıç tarihi"} />
         
         
       </div>
