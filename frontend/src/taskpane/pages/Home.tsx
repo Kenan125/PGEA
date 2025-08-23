@@ -6,12 +6,7 @@ import { useColumnSelect } from "../hooks/useColumnSelect";
 import { useMessageInput } from "../hooks/useMessageInput";
 import { registerEventHandler } from "../utils/registerEventHandler";
 import {
-  Button,
-  Dropdown,
-  Option,
-  Select,
-  Switch,
-  Textarea,
+  Button,  
   Toast,
   Toaster,
   ToastTitle,
@@ -22,7 +17,6 @@ import Preview from "../components/preview";
 import SendDate from "../components/sendDate";
 import { useNavigate } from "react-router-dom";
 import MessageInput from "../components/messageInput";
-import { Send } from "lucide-react";
 import SendMethod from "../components/sendMethod";
 import PhoneNumber from "../components/phoneNumber";
 import Customize from "../components/customize";

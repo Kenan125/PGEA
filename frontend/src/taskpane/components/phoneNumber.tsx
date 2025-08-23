@@ -12,11 +12,11 @@ const PhoneNumber = ({ formik, classes, handleColumnSelect,usedColumns }) => {
                 <div className={classes.phoneNumberColumn}>
                   <Dropdown
                     id="phoneNumberColumn"
-                    name="selectedPhoneNumberColumn"
-                    value={formik.values.selectedPhoneNumberColumn}
+                    name="phoneNumber"
+                    value={formik.values.phoneNumber}
                     onOptionSelect={(_event, data) => {
                       handleColumnSelect(
-                        "selectedPhoneNumberColumn",
+                        "phoneNumber",
                         data.optionValue,
                         "phoneNumber"
                       );
@@ -31,14 +31,14 @@ const PhoneNumber = ({ formik, classes, handleColumnSelect,usedColumns }) => {
                     ))}
                   </Dropdown>
                 </div>
-                {formik.touched.recipients?.[0]?.phoneNumber &&
+                {/* {formik.touched.recipients?.[0]?.phoneNumber &&
                   formik.errors.recipients?.[0]?.phoneNumber && (
                     <div style={{ color: "red", marginTop: "4px" }}>
                       {formik.errors.recipients[0].phoneNumber}
                     </div>
-                  )}
+                  )} */}
 
-                <FormikErrors formik={formik} field={"selectedPhoneNumberColumn"} classes={classes} />
+                {/* <FormikErrors formik={formik} field={"selectedPhoneNumberColumn"} classes={classes} /> */}
               </div>
         </>
     )

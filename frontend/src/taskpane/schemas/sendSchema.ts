@@ -59,9 +59,9 @@ export const sendSchema = yup.object().shape({
     then: (schema)=> schema.required("Select time"),
     otherwise: (schema)=>schema,
   }),
-  selectedPhoneNumberColumn: yup
-  .string()
-  .required("Lütfen alıcı sütununu seçiniz"),
+  // selectedPhoneNumberColumn: yup
+  // .string()
+  // .required("Lütfen alıcı sütununu seçiniz"),
 
   
   

@@ -12,14 +12,20 @@ export const useSendForm = () =>{
       enableReinitialize:true,
       initialValues: {
         Encoding:  "",
-        selectedPhoneNumberColumn: "",
+        
         selectedSendDateColumn: "",
         selectedMessageInput: "",
         sendMethod: "",
         isLastSendDate: false,
         lastSendDate: "",
         messageInput: "",
-        recipients: [],
+        recipients: [
+          {
+            phoneNumber:"",
+            messageInput:"",
+            sendDate:""
+          }
+        ],
         sendDate: "",
         batchSize: 0,
         intervalMinutes: 0,

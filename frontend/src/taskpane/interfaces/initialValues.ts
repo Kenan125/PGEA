@@ -1,4 +1,3 @@
-import { Recipient } from "./Recipient";
 export interface initialValues {
   Encoding: string;
   sendMethod:
@@ -7,13 +6,18 @@ export interface initialValues {
     | "İleri Tarihte Gönder"
     | "Parçalı Gönder"
     | "Sütundaki Tarihe Gönder";
-  selectedPhoneNumberColumn: string;
+  
   selectedSendDateColumn: string;
   selectedMessageInput: string,
   isLastSendDate: boolean;
   lastSendDate: string;
   messageInput: string;
-  recipients: Recipient[];
+  recipients: [
+    {phoneNumber: string,
+    messageInput: string,
+    sendDate?: string,
+  }
+  ];
   sendDate: string;
   batchSize?: number;
   intervalMinutes?: number;
