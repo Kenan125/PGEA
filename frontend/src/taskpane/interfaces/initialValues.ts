@@ -7,8 +7,8 @@ export interface initialValues {
     | "Parçalı Gönder"
     | "Sütundaki Tarihe Gönder";
   
-  selectedSendDateColumn: string;
-  selectedMessageInput: string,
+  
+  
   isLastSendDate: boolean;
   lastSendDate: string;
   messageInput: string;

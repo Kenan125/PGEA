@@ -37,9 +37,9 @@ const ColumnDate = ({ formik,usedColumns,handleColumnSelect, classes }) => {
           disabled={formik.errors.time}
           id="sendDateColumn"
           className={classes.formControl}
-          name="selectedSendDateColumn"
-          value={formik.values.selectedSendDateColumn}          
-          onChange={(e)=>handleColumnSelect("selectedSendDateColumn", e.target.value,"sendDate",formik.values.time)}
+          name="sendDateColumn"
+          value={formik.values.sendDate}          
+          onChange={(e)=>handleColumnSelect("sendDateColumn", e.target.value,"sendDate",formik.values.time)}
           onBlur={formik.handleBlur}          
           
         >

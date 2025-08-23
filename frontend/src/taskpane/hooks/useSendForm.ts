@@ -13,8 +13,8 @@ export const useSendForm = () =>{
       initialValues: {
         Encoding:  "",
         
-        selectedSendDateColumn: "",
-        selectedMessageInput: "",
+        
+        
         sendMethod: "",
         isLastSendDate: false,
         lastSendDate: "",

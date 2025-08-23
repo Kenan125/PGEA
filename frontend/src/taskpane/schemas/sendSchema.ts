@@ -21,10 +21,11 @@ export const sendSchema = yup.object().shape({
     .array()
     .of(
       yup.object().shape({
-        phoneNumber: yup.string(),
+        phoneNumber: yup.string().required("Alıcı Sütunu seçiniz"),
         sendDate: yup.date().when("sendMethod", {
-          is:(val: string)=> val === "ColumnDate",
-          then: (schema) => schema.required("Must select send date column").min(today,"Gönderim tarihi bugünden erken olamaz")
+          is:(val: string)=> val === "Sütundaki Tarihe Gönder",
+          then: (schema) => schema.required("Must select send date column").min(today,"Gönderim tarihi bugünden erken olamaz"),      
+    
         })
       })
     ),

@@ -25,7 +25,7 @@ export function onSubmit() {
       sendMethod: values.sendMethod,
       isLastSendDate: values.isLastSendDate,
       lastSendDate: values.lastSendDate,
-      messageContent: { recipients: payloadRecipients },
+      recipients: payloadRecipients,
       batchSetting: {},
     };
     if(values.sendMethod === "Parçalı Gönder"){

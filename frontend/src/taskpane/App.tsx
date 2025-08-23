@@ -18,7 +18,6 @@ const App: React.FC<AppProps> = () => {
   const classes = useStyles();
   
   const { formik } = useSendForm();
-console.log("PHOOOOOOO" + formik.values.recipients.map((p)=>p.phoneNumber))
 
   return (
     <MemoryRouter>

@@ -11,11 +11,11 @@ const Customize = ({formik,classes,messageSelectRef,handleMessageInput,usedColum
                       <Select
                         ref={messageSelectRef}
                         id="messageColumn"
-                        name="selectedMessageInput"
-                        value={formik.values.selectedMessageInput}
+                        name="messageInput"
+                        value={formik.values.messageInput}
                         onChange={async (e) => {
                           const colLetter = e.target.value;
-                          formik.setFieldValue("selectedMessageInput", colLetter);
+                          formik.setFieldValue("messageInput", colLetter);
                           await handleMessageInput(`Sutun_${colLetter}`, colLetter);
                           formik.setFieldValue(
                             "messageInput",

@@ -21,8 +21,8 @@ const Successful = (props: Partial<DropdownProps>) => {
         </div>
         <Dropdown style={{ minWidth: "auto" }}
                 
-                  id="phoneNumberColumn"
-                  name="selectedPhoneNumberColumn"              
+                  id="phoneNumber"
+                  name="phoneNumber"              
                   placeholder="Alıcı Sütunu"
                   {...props}
                 >

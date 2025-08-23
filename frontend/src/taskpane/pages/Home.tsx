@@ -83,8 +83,8 @@ const Home = ({ formik, classes }) => {
                   id={"preview"}
                   type="button"
                   onClick={() => {
-                    if (!formik.values.selectedPhoneNumberColumn) {
-                      formik.setFieldTouched("selectedPhoneNumberColumn", true);
+                    if (!formik.values.phoneNumber) {
+                      formik.setFieldTouched("phoneNumberp", true);
                       return;
                     }
                     setIsPreviewOpen(true);
