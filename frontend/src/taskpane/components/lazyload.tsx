@@ -2,6 +2,7 @@ import { TreeItem, TreeItemLayout } from '@fluentui/react-components'
 import React, { useEffect, useState } from 'react'
 import { replacePlaceholders } from '../utils/replacePlaceholders'
 import { format } from 'date-fns';
+import { Calendar, MessageCircle, Smartphone } from 'lucide-react';
 
 const Lazyload = ({formik}) => {
   const [date, setDate] = useState<string>("");
@@ -11,17 +12,17 @@ const Lazyload = ({formik}) => {
   return (
     <>
     {formik.values.recipients.map((recipient, index) => (
-                        <TreeItem key={index} itemType="branch">
-                          <TreeItemLayout>{recipient.phoneNumber}</TreeItemLayout>
+                        <TreeItem key={index} itemType="leaf">
+                          <TreeItemLayout><strong><Smartphone/>Telefon Numarası: </strong> {recipient.phoneNumber}</TreeItemLayout>
                           <TreeItem itemType="leaf">
                             <TreeItemLayout>
-                              📅
+                              <Calendar />
                               {formik.values.sendMethod === "Hemen Gönder" ? date : formik.values.sendDate}
                             </TreeItemLayout>
                           </TreeItem>
                           <TreeItem itemType="leaf">
                             <TreeItemLayout>
-                              💬<strong>Mesaj: </strong>
+                              <MessageCircle /><strong>Mesaj: </strong>
                               {formik.values.messageInput
                                 ? replacePlaceholders(
                                     formik.values.messageInput,

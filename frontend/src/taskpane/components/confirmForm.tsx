@@ -14,6 +14,7 @@ import {
 import React, { lazy, Suspense, useEffect, useState } from "react";
 
 import { format } from "date-fns";
+import { UsersRound } from "lucide-react";
 const LazyLoad = lazy(() => import('./lazyload'));
 const ConfirmForm = ({ formik }) => {
   return (
@@ -52,7 +53,7 @@ const ConfirmForm = ({ formik }) => {
                 </TreeItemLayout>
               </TreeItem>
               <TreeItem itemType="branch">
-                <TreeItemLayout>Alıcılar</TreeItemLayout>
+                <TreeItemLayout><UsersRound /><strong>Alıcılar</strong></TreeItemLayout>
                 <Tree>
                   <Suspense>
                     <LazyLoad formik={formik} />
@@ -90,12 +91,6 @@ const ConfirmForm = ({ formik }) => {
 
               )}
             </Tree>
-
-            {Object.entries(formik.values).map(([field, value]) => (
-              <p key={field}>
-                <strong>{field}:</strong> {String(value)}
-              </p>
-            ))}
           </DialogContent>
           <DialogActions>
             <Button appearance="primary">Do Something</Button>

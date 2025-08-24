@@ -1,6 +1,6 @@
 import React from "react";
 import SendDate from "../sendDate";
-import { Input, Label } from "@fluentui/react-components";
+import { InfoLabel, Input, Label } from "@fluentui/react-components";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
 
 const Batch = ({ formik, classes }) => {
@@ -8,8 +8,7 @@ const Batch = ({ formik, classes }) => {
     <>
    
       <div className={classes.containerBatch}>
-        <Label required className={classes.title}>Parçalı Gönderim</Label>
-        <div className={classes.infoRow}>Mesajlarınız aşağıdaki değerlere göre parçalanacaktır.</div>
+        <InfoLabel size="large" info={"Mesajlarınız aşağıdaki değerlere göre parçalanacaktır."} required className={classes.title}>Parçalı Gönderim</InfoLabel>
         <div className={classes.dateRow}>
           <SendDate formik={formik} classes={classes} htmlFor={"sendDate"} value={formik.values.sendDate} label={"Başlangıç tarihi"} />          
         </div>
