@@ -1,4 +1,4 @@
-import { Dropdown, Label, Option } from "@fluentui/react-components";
+import { Dropdown, Label, Option, Tab, TabList } from "@fluentui/react-components";
 import React from "react";
 import { Form } from "react-router-dom";
 import FormikErrors from "./formikErrors";
@@ -8,19 +8,19 @@ const SendMethod = ({formik, classes,options}) => {
         <div className={classes.leftColumn}>
                 {/* Gönderim Şekli */}
                 <Label id="label" htmlFor="sendMethod"></Label>
-                <Dropdown
+                <TabList
                   id="sendMethod"
-                  value={formik.values.sendMethod}
-                  onOptionSelect={(_, data) => formik.setFieldValue("sendMethod", data.optionValue)}
+                  selectedValue={formik.values.sendMethod}
+                  onTabSelect={(_, data) => formik.setFieldValue("sendMethod", data.value)}
                   onBlur={formik.handleBlur}
-                  placeholder="Gönderim Şekli"
+                  appearance="filled-circular"
                 >
                   {options.map((option) => (
-                    <Option key={option} value={option}>
+                    <Tab key={option} value={option}>
                       {option}
-                    </Option>
+                    </Tab>
                   ))}
-                </Dropdown>
+                </TabList>
                 <FormikErrors formik={formik} field={"sendMethod"} classes={classes} />
               </div>
         </>

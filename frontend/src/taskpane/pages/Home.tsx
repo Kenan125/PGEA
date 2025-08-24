@@ -10,6 +10,7 @@ import {
   Toast,
   Toaster,
   ToastTitle,
+  ToggleButton,
   useId,
   useToastController,
 } from "@fluentui/react-components";
@@ -49,7 +50,7 @@ const Home = ({ formik, classes }) => {
   const { handleColumnSelect } = useColumnSelect(formik, usedColumns, colNum);
   const { handleMessageInput } = useMessageInput(formik, usedColumns, colNum);
   const messageSelectRef = useRef<HTMLSelectElement>(null);
-  const [showCustomizeSelect, setShowCustomizeSelect] = useState(false);
+  const [showCustomizeSelect, setShowCustomizeSelect] = useState<boolean>(false);
 
   useEffect(() => {
     registerEventHandler(setUsedColumns, setColNum);
@@ -59,7 +60,9 @@ const Home = ({ formik, classes }) => {
   }, [formik.status]);
 
   console.log("formik:", formik);
-  console.log("sendDate:", formik.values.sendDate);
+  const toggleChecked = () => {
+    setShowCustomizeSelect(value => !value)
+  }
 
   return (
     <>
@@ -84,7 +87,7 @@ const Home = ({ formik, classes }) => {
                   type="button"
                   onClick={() => {
                     if (!formik.values.phoneNumber) {
-                      formik.setFieldTouched("phoneNumberp", true);
+                      formik.setFieldTouched("phoneNumber", true);
                       return;
                     }
                     setIsPreviewOpen(true);
@@ -92,16 +95,14 @@ const Home = ({ formik, classes }) => {
                 >
                   Önizleme
                 </Button>
-                <Button
+                <ToggleButton
                   id={"customize"}
-                  onClick={() => {
-                    setShowCustomizeSelect(true);
-                  }}
-                  type="button"
+                  onClick={toggleChecked}
+                  
                 >
                   {" "}
                   Kişiselleştir{" "}
-                </Button>
+                </ToggleButton>
               </div>
               {showCustomizeSelect && (
                 <Customize
